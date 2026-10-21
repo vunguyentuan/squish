@@ -16,7 +16,7 @@ install: app    ## Copy to /Applications (enables Services + Launch at Login)
 	rm -rf /Applications/Squish.app && cp -R build/Squish.app /Applications/
 	/System/Library/CoreServices/pbs -update
 
-release: app    ## Developer ID sign, notarize and zip → build/Squish.zip
+release: app    ## Developer ID sign, notarize and pack → build/Squish.dmg
 	./scripts/release.sh
 
 clean:

@@ -3,7 +3,7 @@
 A native macOS image and video optimizer: a SwiftUI (Liquid Glass) app on top of a Rust image engine
 and Apple's hardware video encoder.
 
-**[Download for Mac](https://github.com/vunguyentuan/squish/releases/latest/download/Squish.zip)** (macOS 26+, Apple Silicon, notarized) · **[Website](https://squish.madebyvu.com)**
+**[Download for Mac](https://github.com/vunguyentuan/squish/releases/latest/download/Squish.dmg)** (macOS 26+, Apple Silicon, notarized) · **[Website](https://squish.madebyvu.com)**
 
 ![Squish](site/public/assets/app-window.webp)
 
@@ -13,7 +13,7 @@ and Apple's hardware video encoder.
 make run       # build the Rust engine + app → build/Squish.app, then launch
 make install   # copy to /Applications (enables Finder Services + Launch at Login)
 make test      # engine tests
-make release   # Developer ID sign + notarize → build/Squish.zip (needs your own certificate)
+make release   # Developer ID sign + notarize → build/Squish.dmg (needs your own certificate and `npm i -g create-dmg`)
 ```
 
 Requires macOS 26+, Xcode 26+, Rust (Homebrew or rustup).
@@ -61,7 +61,7 @@ Fast/Balanced effort lets the encoder prioritize speed (~1.75× faster, ~6% larg
 ```
 core/src/      lib.rs (FFI) · engine.rs (dispatch) · png_opt · jpeg · webp_opt · avif · svg · decode · exif · format
 App/Sources/   Engine/ (Swift bridge) · Model/ (queue, file ops, prefs) · Shake/ (detector, shelf panel) · Views/
-scripts/       build-app.sh (bundle + ad-hoc sign) · release.sh (notarize) · make-icon.swift (renders the icon)
+scripts/       build-app.sh (bundle + ad-hoc sign) · release.sh (DMG + notarize) · make-icon.swift (renders the icon)
 site/          landing page
 ```
 
