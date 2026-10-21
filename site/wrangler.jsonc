@@ -1,0 +1,8 @@
+{
+  // Static landing page for Squish, served by Cloudflare Workers static assets.
+  "name": "squish",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public"
+  }
+}

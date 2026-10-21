@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Squish — Image & Video Optimizer for Mac</title>
+<meta name="description" content="Squish is a free, open-source Mac app that makes images and videos dramatically smaller with the best encoders available. PNG, JPEG, WebP, SVG, HEIC, AVIF, MOV and MP4.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Squish — Smaller files. Same pixels.">
+<meta property="og:description" content="A free, open-source Mac app that shrinks images and videos with mozjpeg, libimagequant, oxipng and Apple's hardware HEVC encoder.">
+<meta property="og:image" content="https://squish.vunguyen-personal-site.workers.dev/assets/og-image.png">
+<meta property="og:url" content="https://squish.vunguyen-personal-site.workers.dev/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.png">
+<style>
+  :root {
+    --bg: #fbfbfd;
+    --surface: #ffffff;
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --line: rgba(0, 0, 0, 0.08);
+    --accent: #6a4cff;
+    --accent-2: #b14cf0;
+    --green: #1f9d55;
+    --shadow: 0 30px 80px -20px rgba(40, 20, 120, 0.35), 0 10px 30px -10px rgba(0, 0, 0, 0.15);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000;
+      --surface: #111114;
+      --text: #f5f5f7;
+      --muted: #a1a1a6;
+      --line: rgba(255, 255, 255, 0.1);
+      --accent: #8b74ff;
+      --accent-2: #c77dff;
+      --green: #32d74b;
+      --shadow: 0 30px 80px -20px rgba(110, 80, 255, 0.35), 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: color-mix(in srgb, var(--bg) 75%, transparent);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; align-items: center; gap: 22px; height: 52px; font-size: 14px; }
+  nav .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text); font-size: 17px; }
+  nav .brand img { width: 26px; height: 26px; }
+  nav .spacer { flex: 1; }
+  nav a.link { color: var(--muted); }
+  nav a.link:hover { color: var(--text); text-decoration: none; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: var(--accent); color: #fff; font-weight: 500;
+  }
+  .pill:hover { text-decoration: none; filter: brightness(1.08); }
+
+  header.hero { text-align: center; padding: 72px 0 40px; }
+  .hero .icon { width: 120px; height: 120px; filter: drop-shadow(0 16px 30px rgba(106, 76, 255, 0.35)); }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 72px); line-height: 1.04; letter-spacing: -0.035em;
+    margin: 18px 0 14px; font-weight: 700;
+  }
+  .hero h1 span {
+    background: linear-gradient(90deg, #5b6cff, var(--accent-2), #ff6b9e);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.lede { font-size: clamp(19px, 2.4vw, 23px); color: var(--muted); max-width: 680px; margin: 0 auto; }
+  .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 30px 0 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 26px; border-radius: 999px; font-size: 17px; font-weight: 500;
+  }
+  .btn:hover { text-decoration: none; }
+  .btn.primary { background: var(--text); color: var(--bg); }
+  .btn.primary:hover { opacity: 0.88; }
+  .btn.secondary { color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+  .btn.secondary:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .btn svg { width: 18px; height: 18px; }
+  .fineprint { color: var(--muted); font-size: 13px; }
+
+  .shot { margin: 34px auto 0; max-width: 820px; position: relative; }
+  .shot::before {
+    content: ""; position: absolute; inset: 10% 5% -4%; z-index: -1;
+    background: radial-gradient(closest-side, rgba(120, 90, 255, 0.35), transparent);
+    filter: blur(40px);
+  }
+  .shot img { width: 100%; height: auto; display: block; border-radius: 14px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+
+  section { padding: 80px 0; }
+  section h2 { font-size: clamp(30px, 4.5vw, 44px); letter-spacing: -0.025em; line-height: 1.1; margin: 0 0 14px; text-align: center; }
+  section .sub { text-align: center; color: var(--muted); font-size: 19px; max-width: 640px; margin: 0 auto 44px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 18px; overflow: hidden; border: 1px solid var(--line); }
+  .stat { background: var(--surface); padding: 26px 22px; }
+  .stat b { display: block; font-size: 34px; letter-spacing: -0.03em; color: var(--green); font-weight: 700; }
+  .stat span { color: var(--muted); font-size: 14px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
+  .card .glyph { font-size: 26px; line-height: 1; margin-bottom: 14px; }
+  .card h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -0.01em; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .shake { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .shake h2, .shake .sub { text-align: left; margin-left: 0; }
+  .stage {
+    position: relative; height: 320px; border-radius: 22px; overflow: hidden;
+    background: linear-gradient(135deg, #5b6cff, #b655f9 55%, #ff6b9e);
+    border: 1px solid var(--line);
+  }
+  .stage .shelf {
+    position: absolute; left: 50%; top: 50%; width: 170px; height: 170px; margin: -85px 0 0 -85px;
+    border-radius: 30px; background: rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    color: #fff; font-weight: 600; font-size: 15px;
+    animation: shelf 4.5s infinite;
+  }
+  .stage .shelf svg { width: 42px; height: 42px; }
+  .stage .cursor { position: absolute; left: 50%; top: 58%; animation: shake 4.5s infinite; }
+  .stage .cursor .file {
+    position: absolute; left: 14px; top: 16px; width: 38px; height: 46px; border-radius: 6px;
+    background: #fff; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  }
+  .stage .cursor .file::after { content: ""; position: absolute; inset: 8px 7px 14px; border-radius: 3px; background: linear-gradient(135deg, #ffb36b, #ff6b9e); }
+  .stage .cursor svg { position: relative; width: 26px; height: 26px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)); }
+  @keyframes shake {
+    0% { transform: translate(-140px, 40px); }
+    15% { transform: translate(-20px, 0); }
+    20% { transform: translate(-60px, 0); }
+    25% { transform: translate(-10px, 0); }
+    30% { transform: translate(-60px, 0); }
+    35% { transform: translate(-10px, 0); }
+    40% { transform: translate(-35px, 0); }
+    62% { transform: translate(-30px, -60px); opacity: 1; }
+    70% { transform: translate(-30px, -60px); opacity: 0; }
+    100% { transform: translate(-140px, 40px); opacity: 0; }
+  }
+  @keyframes shelf {
+    0%, 36% { opacity: 0; transform: scale(0.85); }
+    42% { opacity: 1; transform: scale(1); }
+    58% { opacity: 1; transform: scale(1); }
+    62% { opacity: 1; transform: scale(1.05); }
+    66%, 86% { opacity: 1; transform: scale(1); }
+    94%, 100% { opacity: 0; transform: scale(0.9); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage .cursor, .stage .shelf { animation: none; }
+    .stage .cursor { display: none; }
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  th, td { text-align: left; padding: 14px 20px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  th { font-size: 13px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  td { color: var(--muted); }
+  td:first-child { color: var(--text); }
+
+  .oss { text-align: center; }
+  pre {
+    display: inline-block; text-align: left; margin: 0 auto;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 22px; font: 14px/1.6 ui-monospace, "SF Mono", Menlo, monospace; overflow-x: auto; max-width: 100%;
+  }
+  footer { border-top: 1px solid var(--line); padding: 30px 0 50px; color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; gap: 18px; flex-wrap: wrap; justify-content: space-between; }
+
+  @media (max-width: 820px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .grid { grid-template-columns: 1fr; }
+    .shake { grid-template-columns: 1fr; }
+    .shake h2, .shake .sub { text-align: center; margin-left: auto; }
+    nav a.link { display: none; }
+    section { padding: 56px 0; }
+    th, td { padding: 12px 14px; }
+    td:first-child { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><img src="assets/icon-512.webp" alt="" width="26" height="26">Squish</a>
+    <span class="spacer"></span>
+    <a class="link" href="#features">Features</a>
+    <a class="link" href="#engines">Engines</a>
+    <a class="link" href="https://github.com/vunguyentuan/squish">GitHub</a>
+    <a class="pill" href="https://github.com/vunguyentuan/squish/releases/latest/download/Squish.zip">Download</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <img class="icon" src="assets/icon-512.webp" alt="Squish app icon" width="120" height="120">
+    <h1>Smaller files.<br><span>Same pixels.</span></h1>
+    <p class="lede">Squish is a free, open-source Mac app that shrinks images and videos with the best encoders available. Drop files in, get them back up to 90% lighter.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/vunguyentuan/squish/releases/latest/download/Squish.zip">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.6-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.5-4zM14 5.4c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg>
+        Download for Mac
+      </a>
+      <a class="btn secondary" href="https://github.com/vunguyentuan/squish">View source on GitHub</a>
+    </div>
+    <p class="fineprint">Free &amp; open source (GPL-3.0) · Notarized by Apple · macOS 26 Tahoe or later · Apple Silicon</p>
+    <div class="shot">
+      <img src="assets/screenshot-results.webp" width="1120" height="880" alt="Squish window listing optimized files: a JPEG 74% smaller, PNGs 47% and 89% smaller, an SVG 50% smaller and a video 68% smaller">
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Real numbers, not promises.</h2>
+    <p class="sub">Measured on an M4 Pro with the default Balanced preset.</p>
+    <div class="stats">
+      <div class="stat"><b>−91%</b><span>36 MP photo, 11.2 MB → 0.95 MB in 0.85 s</span></div>
+      <div class="stat"><b>−89%</b><span>4K60 screen recording, 182 MB → 19 MB, visually identical</span></div>
+      <div class="stat"><b>−83%</b><span>4K Retina screenshot PNG</span></div>
+      <div class="stat"><b>0 bytes</b><span>uploaded. Everything runs on your Mac.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap shake" aria-labelledby="shake-title">
+  <div>
+    <h2 id="shake-title">Shake to drop.</h2>
+    <p class="sub">Dragging files somewhere? Give the pointer a quick shake and a drop shelf appears right under it, in any app. Drop, watch the bytes melt away, then drag the optimized files straight back out.</p>
+  </div>
+  <div class="stage" aria-hidden="true">
+    <div class="shelf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10m0 0-3.5-3.5M12 13l3.5-3.5"/><path d="M4 13.5 5.6 18a2 2 0 0 0 1.9 1.4h9a2 2 0 0 0 1.9-1.4l1.6-4.5"/><path d="M4 13.5h4.2a1 1 0 0 1 .9.6 3.2 3.2 0 0 0 5.8 0 1 1 0 0 1 .9-.6H20"/></svg>
+      Drop to Optimize
+    </div>
+    <div class="cursor">
+      <div class="file"></div>
+      <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6.2 1.6L10 19z" fill="#fff" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Quietly brilliant.</h2>
+    <p class="sub">Feels like it came with your Mac. Does more than it lets on.</p>
+    <div class="grid">
+      <div class="card"><div class="glyph">🎞️</div><h3>Videos too</h3><p>MOV and MP4 re-encoded to HEVC on Apple's hardware encoder. Resolution, rotation, HDR and audio are kept, and the result starts playing instantly on the web.</p></div>
+      <div class="card"><div class="glyph">🛟</div><h3>Safe by default</h3><p>Originals go to the Trash, so Restore is one click away. Finder tags and dates are preserved, and optimizing never makes a file bigger.</p></div>
+      <div class="card"><div class="glyph">🎯</div><h3>Pixel-perfect mode</h3><p>The Lossless preset shrinks PNG and JPEG files without changing a single pixel. Balanced and Smallest go further when you want them to.</p></div>
+      <div class="card"><div class="glyph">🔁</div><h3>Convert in a click</h3><p>Turn HEIC, TIFF, PNG or JPEG into WebP, AVIF or JPEG. Compare before and after with a slider, or press Space for Quick Look.</p></div>
+      <div class="card"><div class="glyph">🧭</div><h3>Everywhere you work</h3><p>Drop on the window, the Dock icon or the shelf, use Finder's Services menu, or keep it in the menu bar. Folders are scanned for you.</p></div>
+      <div class="card"><div class="glyph">🔒</div><h3>Private and native</h3><p>A SwiftUI app with a Rust engine. No accounts, no uploads, no analytics. Your files never leave your Mac.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="engines">
+  <div class="wrap">
+    <h2>The best encoders in town.</h2>
+    <p class="sub">Squish picks the strongest open-source codec for each format and tunes it, so you don't have to.</p>
+    <table>
+      <thead><tr><th>Format</th><th>What Squish does</th></tr></thead>
+      <tbody>
+        <tr><td>PNG</td><td>libimagequant palette quantization (the engine behind pngquant), then oxipng's lossless Deflate search</td></tr>
+        <tr><td>JPEG</td><td>mozjpeg trellis re-encode, or a lossless jpegtran-style transcode, whichever is smaller</td></tr>
+        <tr><td>WebP</td><td>libwebp with sharp YUV, up to its slowest, strongest method</td></tr>
+        <tr><td>AVIF</td><td>rav1e AV1 encoder via ravif</td></tr>
+        <tr><td>SVG</td><td>OXVG, a Rust port of SVGO</td></tr>
+        <tr><td>Video</td><td>HEVC on Apple's hardware encoder, HDR stays 10-bit</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="oss">
+  <div class="wrap">
+    <h2>Free and open source.</h2>
+    <p class="sub">Squish is licensed under the GPL-3.0. Read the code, file an issue, or build it yourself.</p>
+    <pre>git clone https://github.com/vunguyentuan/squish
+cd squish && make run</pre>
+    <p class="fineprint" style="margin-top:16px">Needs Xcode 26 and Rust. Every image on this page was optimized by Squish.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Vu Nguyen · Released under the <a href="https://github.com/vunguyentuan/squish/blob/main/LICENSE">GPL-3.0</a></span>
+    <span>Built with mozjpeg, libimagequant, oxipng, libwebp, rav1e and OXVG.</span>
+  </div>
+</footer>
+
+</body>
+</html>

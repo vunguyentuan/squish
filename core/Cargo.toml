@@ -1,0 +1,33 @@
+[package]
+name = "squish_core"
+version = "1.0.0"
+edition = "2024"
+description = "Squish image optimization engine (C ABI for the macOS app)"
+license = "GPL-3.0-or-later"
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "gif", "tiff", "bmp", "rayon"] }
+imagequant = "4"
+imgref = "1.12"
+mozjpeg = { version = "0.10", default-features = false, features = ["with_simd", "parallel"] }
+mozjpeg-sys = { version = "2.2", default-features = false, features = ["unwinding", "with_simd", "parallel"] }
+oxipng = { version = "10", default-features = false, features = ["parallel", "zopfli"] }
+oxvg_ast = { version = "0.0.9", features = ["roxmltree"] }
+oxvg_optimiser = { version = "0.0.9", default-features = false }
+png = "0.18"
+ravif = "0.13"
+rgb = "0.8"
+webp = { version = "0.3", default-features = false }
+libc = "0.2"
+roxmltree = "0.21"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "unwind"
+debug = false
+strip = "debuginfo"

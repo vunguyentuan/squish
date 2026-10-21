@@ -1,0 +1,4 @@
+module CSquishCore [system] {
+    header "../../../core/include/squish_core.h"
+    export *
+}
