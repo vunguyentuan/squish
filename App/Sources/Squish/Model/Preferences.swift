@@ -83,6 +83,7 @@ final class Preferences {
     var outputFolder: URL? { didSet { save(outputFolder?.path, "outputFolder") } }
     var shakeToShelf: Bool { didSet { save(shakeToShelf, "shakeToShelf") } }
     var playSounds: Bool { didSet { save(playSounds, "playSounds") } }
+    var hideDockIcon: Bool { didSet { save(hideDockIcon, "hideDockIcon") } }
 
     private init() {
         defaults.register(defaults: [
@@ -97,6 +98,7 @@ final class Preferences {
             "copySuffix": "-squished",
             "shakeToShelf": true,
             "playSounds": false,
+            "hideDockIcon": true,
         ])
         preset = Preset(rawValue: defaults.string(forKey: "preset") ?? "") ?? .balanced
         quality = defaults.integer(forKey: "quality")
@@ -110,6 +112,7 @@ final class Preferences {
         outputFolder = defaults.string(forKey: "outputFolder").map { URL(fileURLWithPath: $0) }
         shakeToShelf = defaults.bool(forKey: "shakeToShelf")
         playSounds = defaults.bool(forKey: "playSounds")
+        hideDockIcon = defaults.bool(forKey: "hideDockIcon")
     }
 
     var options: OptimizeOptions {

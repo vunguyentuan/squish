@@ -45,6 +45,13 @@ private struct GeneralSettings: View {
                     .onChange(of: prefs.shakeToShelf) { _, on in ShelfController.shared.setEnabled(on) }
                 Button("Show Shelf Now") { ShelfController.shared.show() }
             }
+            Section("Dock") {
+                Toggle("Hide the Dock icon when no windows are open", isOn: $prefs.hideDockIcon)
+                    .onChange(of: prefs.hideDockIcon) { DockIcon.shared.update() }
+                Text("Squish stays in the menu bar, and the drop shelf keeps working.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             Section("Feedback") {
                 Toggle("Play a sound when a batch finishes", isOn: $prefs.playSounds)
                 Toggle("Launch Squish at login", isOn: $launchAtLogin)
