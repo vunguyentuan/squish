@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Squish</title>
+    <link>https://squish.madebyvu.com/appcast.xml</link>
+    <item>
+      <title>Squish 1.2.0</title>
+      <pubDate>Wed, 21 Oct 2026 14:14:05 +0000</pubDate>
+      <sparkle:version>3</sparkle:version>
+      <sparkle:shortVersionString>1.2.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>https://github.com/vunguyentuan/squish/releases</sparkle:fullReleaseNotesLink>
+      <description sparkle:format="markdown"><![CDATA[
+- **Check for Updates.** Squish now updates itself. It checks automatically (turn that off in Settings → General → Updates), or choose Check for Updates… from the Squish menu or the menu bar item.
+]]></description>
+      <enclosure url="https://github.com/vunguyentuan/squish/releases/download/v1.2.0/Squish.dmg" type="application/octet-stream" sparkle:edSignature="aSCrxdO4Cd6+DIjrbh4CsAx5cTtL8A7pFiXMKkj6Kk9OJ1LFuLMRazjqJgnEIZXF6Ehb8n5spEI1/xO8+R1KCg==" length="8592939" />
+    </item>
+  </channel>
+</rss>

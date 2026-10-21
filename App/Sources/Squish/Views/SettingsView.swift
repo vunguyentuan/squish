@@ -52,6 +52,12 @@ private struct GeneralSettings: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            Section("Updates") {
+                @Bindable var updater = Updater.shared
+                Toggle("Automatically check for updates", isOn: $updater.automaticallyChecks)
+                Button("Check Now") { updater.check() }
+                    .disabled(!updater.canCheck)
+            }
             Section("Feedback") {
                 Toggle("Play a sound when a batch finishes", isOn: $prefs.playSounds)
                 Toggle("Launch Squish at login", isOn: $launchAtLogin)

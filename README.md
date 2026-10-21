@@ -14,6 +14,7 @@ make run       # build the Rust engine + app → build/Squish.app, then launch
 make install   # copy to /Applications (enables Finder Services + Launch at Login)
 make test      # engine tests
 make release   # Developer ID sign + notarize → build/Squish.dmg (needs your own certificate and `npm i -g create-dmg`)
+make publish   # GitHub release + deploy the site and Sparkle appcast (notes from release-notes/<version>.md)
 ```
 
 Requires macOS 26+, Xcode 26+, Rust (Homebrew or rustup).

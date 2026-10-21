@@ -25,6 +25,8 @@ struct MenuBarContent: View {
         Toggle("Shake to Drop", isOn: $prefs.shakeToShelf)
             .onChange(of: prefs.shakeToShelf) { _, on in ShelfController.shared.setEnabled(on) }
         Divider()
+        Button("Check for Updates…") { Updater.shared.check() }
+            .disabled(!Updater.shared.canCheck)
         SettingsLink { Text("Settings…") }
             .keyboardShortcut(",")
         Button("Quit Squish") { NSApp.terminate(nil) }

@@ -7,6 +7,7 @@ struct SquishApp: App {
 
     private let store = OptimizerStore.shared
     private let prefs = Preferences.shared
+    private let updater = Updater.shared
 
     var body: some Scene {
         Window("Squish", id: "main") {
@@ -17,6 +18,10 @@ struct SquishApp: App {
         .defaultSize(width: 560, height: 440)
         .windowToolbarStyle(.unified)
         .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") { updater.check() }
+                    .disabled(!updater.canCheck)
+            }
             CommandGroup(replacing: .newItem) {}
             CommandGroup(after: .newItem) {
                 Button("Show Drop Shelf") { ShelfController.shared.show() }

@@ -1,4 +1,4 @@
-.PHONY: app run core test install release clean
+.PHONY: app run core test install release publish clean
 
 app:            ## Build build/Squish.app (release)
 	./scripts/build-app.sh release
@@ -16,8 +16,11 @@ install: app    ## Copy to /Applications (enables Services + Launch at Login)
 	rm -rf /Applications/Squish.app && cp -R build/Squish.app /Applications/
 	/System/Library/CoreServices/pbs -update
 
-release: app    ## Developer ID sign, notarize and pack → build/Squish.dmg
+release: app    ## Developer ID sign, notarize and pack → build/Squish.dmg, write the appcast
 	./scripts/release.sh
+
+publish:        ## Upload the GitHub release, then deploy the site and appcast
+	./scripts/publish.sh
 
 clean:
 	rm -rf build App/.build core/target

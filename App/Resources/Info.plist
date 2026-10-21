@@ -10,12 +10,15 @@
     <key>CFBundleName</key><string>Squish</string>
     <key>CFBundleDisplayName</key><string>Squish</string>
     <key>CFBundlePackageType</key><string>APPL</string>
-    <key>CFBundleShortVersionString</key><string>1.1.0</string>
-    <key>CFBundleVersion</key><string>2</string>
+    <key>CFBundleShortVersionString</key><string>1.2.0</string>
+    <key>CFBundleVersion</key><string>3</string>
     <key>LSMinimumSystemVersion</key><string>26.0</string>
     <key>LSApplicationCategoryType</key><string>public.app-category.graphics-design</string>
     <key>NSHighResolutionCapable</key><true/>
     <key>NSPrincipalClass</key><string>NSApplication</string>
+    <key>SUFeedURL</key><string>https://squish.madebyvu.com/appcast.xml</string>
+    <key>SUPublicEDKey</key><string>h8g5GjQqha5fHr5Y0Lv7Jw+ByF6Bwzb+tffenOhYOn0=</string>
+    <key>SUEnableAutomaticChecks</key><true/>
     <key>NSHumanReadableCopyright</key><string>Copyright © 2026 Vu Nguyen. Free software under GPL-3.0.</string>
     <key>CFBundleDocumentTypes</key>
     <array>

@@ -22,6 +22,8 @@ echo "▸ Assembling bundle"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/Squish"
+mkdir -p "$APP/Contents/Frameworks"
+ditto "$(dirname "$BIN")/Sparkle.framework" "$APP/Contents/Frameworks/Sparkle.framework"
 cp "$ROOT/App/Resources/Info.plist" "$APP/Contents/Info.plist"
 
 ICON_CACHE="$ROOT/build/AppIcon.icns"
@@ -42,5 +44,5 @@ cp "$ICON_CACHE" "$APP/Contents/Resources/AppIcon.icns"
 cp "$ROOT/LICENSE" "$APP/Contents/Resources/LICENSE.txt"
 
 if [ "$CONFIG" = "release" ]; then strip -x "$APP/Contents/MacOS/Squish"; fi
-codesign --force --sign - --timestamp=none "$APP" >/dev/null
+codesign --force --deep --sign - --timestamp=none "$APP" >/dev/null
 echo "✓ $(du -sh "$APP" | cut -f1)  $APP"
