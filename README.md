@@ -3,7 +3,7 @@
 A native macOS image and video optimizer: a SwiftUI (Liquid Glass) app on top of a Rust image engine
 and Apple's hardware video encoder.
 
-**[Download for Mac](https://github.com/vunguyentuan/squish/releases/latest/download/Squish.zip)** (macOS 26+, Apple Silicon, notarized) · **[Website](https://squish.vunguyen-personal-site.workers.dev)**
+**[Download for Mac](https://github.com/vunguyentuan/squish/releases/latest/download/Squish.zip)** (macOS 26+, Apple Silicon, notarized) · **[Website](https://squish.madebyvu.com)**
 
 ![Squish](site/public/assets/app-window.webp)
 
