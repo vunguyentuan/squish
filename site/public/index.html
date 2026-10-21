@@ -86,46 +86,9 @@
 
   .split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
   .split .intro { margin-bottom: 0; }
-  .stage {
-    position: relative; height: 300px; border-radius: 12px;
-    background: var(--soft); border: 1px solid var(--line); overflow: hidden;
-  }
-  .stage .shelf {
-    position: absolute; left: 50%; top: 50%; width: 148px; height: 148px; margin: -74px 0 0 -74px;
-    border-radius: 26px; background: color-mix(in srgb, var(--bg) 80%, transparent);
-    border: 1px solid var(--line); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-    font-size: 13px; font-weight: 600;
-    animation: shelf 4.5s infinite;
-  }
-  .stage .shelf svg { width: 34px; height: 34px; color: var(--muted); }
-  .stage .cursor { position: absolute; left: 50%; top: 58%; animation: shake 4.5s infinite; }
-  .stage .cursor .file {
-    position: absolute; left: 13px; top: 15px; width: 32px; height: 40px; border-radius: 4px;
-    background: var(--bg); border: 1px solid var(--line); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  .stage .cursor .file::after { content: ""; position: absolute; inset: 7px 6px 12px; border-radius: 2px; background: var(--faint); }
-  .stage .cursor svg { position: relative; width: 22px; height: 22px; }
-  @keyframes shake {
-    0% { transform: translate(-130px, 40px); }
-    15% { transform: translate(-20px, 0); }
-    20% { transform: translate(-55px, 0); }
-    25% { transform: translate(-10px, 0); }
-    30% { transform: translate(-55px, 0); }
-    35% { transform: translate(-10px, 0); }
-    40% { transform: translate(-30px, 0); }
-    62% { transform: translate(-28px, -54px); opacity: 1; }
-    70% { transform: translate(-28px, -54px); opacity: 0; }
-    100% { transform: translate(-130px, 40px); opacity: 0; }
-  }
-  @keyframes shelf {
-    0%, 36% { opacity: 0; transform: scale(0.9); }
-    42%, 86% { opacity: 1; transform: scale(1); }
-    94%, 100% { opacity: 0; transform: scale(0.95); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .stage .cursor { display: none; }
-    .stage .shelf { animation: none; }
+  .demo {
+    display: block; width: 100%; height: auto; aspect-ratio: 16 / 9;
+    border-radius: 12px; border: 1px solid var(--line); background: var(--soft);
   }
 
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
@@ -199,21 +162,18 @@
 </section>
 
 <section>
-  <div class="wrap split">
-    <div>
-      <h2>Shake to drop.</h2>
-      <p class="intro">Dragging files somewhere? Give the pointer a quick shake and a drop shelf appears under it, in any app. Drop, wait a moment, then drag the smaller files straight back out.</p>
-    </div>
-    <div class="stage" aria-hidden="true">
-      <div class="shelf">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10m0 0-3.5-3.5M12 13l3.5-3.5"/><path d="M4 13.5 5.6 18a2 2 0 0 0 1.9 1.4h9a2 2 0 0 0 1.9-1.4l1.6-4.5"/><path d="M4 13.5h4.2a1 1 0 0 1 .9.6 3.2 3.2 0 0 0 5.8 0 1 1 0 0 1 .9-.6H20"/></svg>
-        Drop to Optimize
-      </div>
-      <div class="cursor">
-        <div class="file"></div>
-        <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6.2 1.6L10 19z" fill="#fff" stroke="#000" stroke-width="1.3" stroke-linejoin="round"/></svg>
-      </div>
-    </div>
+  <div class="wrap">
+    <h2>Shake to drop.</h2>
+    <p class="intro">Dragging files somewhere? Give the pointer a quick shake and a drop shelf appears under it, in any app. Drop, wait a moment, then drag the smaller files straight back out.</p>
+    <video class="demo" src="assets/shake-to-drop.mp4" poster="assets/shake-to-drop.webp" width="1600" height="900" autoplay muted loop playsinline preload="metadata" aria-label="Recording: four images are dragged out of a Finder window, the pointer is shaken, the Squish shelf appears, and after dropping them Squish saves 5.1 MB, 73% smaller"></video>
+    <script>
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const demo = document.querySelector(".demo");
+        demo.removeAttribute("autoplay");
+        demo.pause();
+        demo.controls = true;
+      }
+    </script>
   </div>
 </section>
 
