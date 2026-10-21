@@ -5,7 +5,7 @@ and Apple's hardware video encoder.
 
 **[Download for Mac](https://github.com/vunguyentuan/squish/releases/latest/download/Squish.zip)** (macOS 26+, Apple Silicon, notarized) · **[Website](https://squish.vunguyen-personal-site.workers.dev)**
 
-![Squish](site/public/assets/screenshot-results.webp)
+![Squish](site/public/assets/app-window.webp)
 
 ## Build from source
 
