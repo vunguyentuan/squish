@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-enum Preset: String, CaseIterable, Identifiable {
+enum Preset: String, CaseIterable, Identifiable, Codable {
     case lossless, balanced, maximum, custom
 
     var id: String { rawValue }
@@ -64,6 +64,56 @@ enum SaveMode: String, CaseIterable, Identifiable {
     }
 }
 
+/// Source formats that can override the global preset and output format.
+enum FormatKind: String, CaseIterable, Identifiable, Codable, CodingKeyRepresentable {
+    case png, jpeg, webp, gif, heic, raster, video
+
+    var id: String { rawValue }
+
+    init?(_ format: ImageFormat) {
+        switch format {
+        case .png: self = .png
+        case .jpeg: self = .jpeg
+        case .webp: self = .webp
+        case .gif: self = .gif
+        case .heic, .avif: self = .heic
+        case .tiff, .bmp: self = .raster
+        case .mov, .mp4: self = .video
+        case .svg, .unknown: return nil
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .png: "PNG"
+        case .jpeg: "JPEG"
+        case .webp: "WebP"
+        case .gif: "GIF"
+        case .heic: String(localized: "HEIC & AVIF")
+        case .raster: String(localized: "TIFF & BMP")
+        case .video: String(localized: "Video")
+        }
+    }
+
+    /// Output choices that make sense for this source.
+    var outputs: [OutputFormat] {
+        switch self {
+        case .png, .jpeg, .heic, .raster: [.original, .webp, .avif, .jpeg]
+        case .webp: [.original, .avif, .jpeg]
+        case .gif: [.original, .webp, .mp4]
+        case .video: [.original]
+        }
+    }
+}
+
+/// A per-format override; nil fields follow the global settings.
+struct FormatRule: Codable, Equatable {
+    var preset: Preset?
+    var output: OutputFormat?
+
+    var isEmpty: Bool { preset == nil && output == nil }
+}
+
 /// User settings, persisted to UserDefaults.
 @Observable
 final class Preferences {
@@ -86,6 +136,9 @@ final class Preferences {
     var hideDockIcon: Bool { didSet { save(hideDockIcon, "hideDockIcon") } }
     /// Longest edge in pixels; 0 keeps the original size.
     var maxDimension: Int { didSet { save(maxDimension, "maxDimension") } }
+    var formatRules: [FormatKind: FormatRule] {
+        didSet { save(try? JSONEncoder().encode(formatRules.filter { !$0.value.isEmpty }), "formatRules") }
+    }
 
     static let resizeChoices = [0, 3840, 2560, 1920, 1600, 1280, 1024, 800]
 
@@ -119,6 +172,8 @@ final class Preferences {
         playSounds = defaults.bool(forKey: "playSounds")
         hideDockIcon = defaults.bool(forKey: "hideDockIcon")
         maxDimension = defaults.integer(forKey: "maxDimension")
+        formatRules = defaults.data(forKey: "formatRules")
+            .flatMap { try? JSONDecoder().decode([FormatKind: FormatRule].self, from: $0) } ?? [:]
     }
 
     var options: OptimizeOptions {
@@ -131,6 +186,23 @@ final class Preferences {
             output: output,
             maxDimension: maxDimension
         )
+    }
+
+    /// The global options with any per-format rule applied.
+    func options(for format: ImageFormat) -> OptimizeOptions {
+        var resolved = options
+        guard let kind = FormatKind(format), let rule = formatRules[kind] else { return resolved }
+        if let (q, e, l) = rule.preset?.values {
+            (resolved.quality, resolved.effort, resolved.lossless) = (q, e, l)
+        }
+        if let output = rule.output { resolved.output = output }
+        return resolved
+    }
+
+    func rule(for kind: FormatKind) -> FormatRule { formatRules[kind] ?? FormatRule() }
+
+    func setRule(_ rule: FormatRule, for kind: FormatKind) {
+        formatRules[kind] = rule.isEmpty ? nil : rule
     }
 
     /// One-line description, e.g. "Balanced · WebP · 2560 px".

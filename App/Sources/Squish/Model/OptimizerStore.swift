@@ -120,7 +120,7 @@ final class OptimizerStore {
         running += 1
         if job.inputFormat.isVideo { runningVideo = true }
         withAnimation(.smooth) { job.state = .working }
-        var options = prefs.options
+        var options = prefs.options(for: job.inputFormat)
         if let override = job.outputOverride { options.output = override }
         let order = WorkOrder(
             source: job.sourceURL,

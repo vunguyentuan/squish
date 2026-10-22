@@ -46,7 +46,7 @@ nonisolated enum ImageFormat: UInt8, Sendable, CaseIterable {
     ]).union(VideoWork.extensions)
 }
 
-nonisolated enum OutputFormat: String, Sendable, CaseIterable, Identifiable {
+nonisolated enum OutputFormat: String, Sendable, CaseIterable, Identifiable, Codable {
     case original, webp, avif, jpeg
     /// Animated GIF → H.264 video, made by the app rather than the engine.
     case mp4

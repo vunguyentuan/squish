@@ -6,6 +6,7 @@ struct SettingsView: View {
         TabView {
             Tab("General", systemImage: "gearshape") { GeneralSettings() }
             Tab("Optimization", systemImage: "slider.horizontal.3") { OptimizationSettings() }
+            Tab("Formats", systemImage: "photo.on.rectangle.angled") { FormatSettings() }
             Tab("About", systemImage: "info.circle") { AboutSettings() }
         }
         .frame(width: 520)
@@ -162,6 +163,60 @@ struct ResizePicker: View {
                 Text("\(String(prefs.maxDimension)) px").tag(prefs.maxDimension)
             }
         }
+    }
+}
+
+private struct FormatSettings: View {
+    @Environment(Preferences.self) private var prefs
+
+    var body: some View {
+        Form {
+            Section {
+                ForEach(FormatKind.allCases) { kind in
+                    LabeledContent(kind.title) {
+                        HStack(spacing: 8) {
+                            Picker("Preset", selection: binding(kind, \.preset)) {
+                                Text("Default").tag(Preset?.none)
+                                Divider()
+                                ForEach([Preset.lossless, .balanced, .maximum]) { Text($0.title).tag(Optional($0)) }
+                            }
+                            .labelsHidden()
+                            .frame(width: 120)
+                            Picker("Output", selection: binding(kind, \.output)) {
+                                Text("Default").tag(OutputFormat?.none)
+                                Divider()
+                                ForEach(kind.outputs) { Text($0.title).tag(Optional($0)) }
+                            }
+                            .labelsHidden()
+                            .frame(width: 130)
+                            .disabled(kind.outputs.count < 2)
+                        }
+                    }
+                }
+            } header: {
+                Text("Per-format rules")
+            } footer: {
+                Text("“Default” follows the preset and output format chosen in the toolbar. For example: keep PNGs lossless, convert HEIC to JPEG, and turn animated GIFs into MP4 video.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Section {
+                Button("Reset All Rules") { prefs.formatRules = [:] }
+                    .disabled(prefs.formatRules.isEmpty)
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private func binding<Value>(_ kind: FormatKind, _ field: WritableKeyPath<FormatRule, Value>) -> Binding<Value> {
+        Binding(
+            get: { prefs.rule(for: kind)[keyPath: field] },
+            set: { value in
+                var rule = prefs.rule(for: kind)
+                rule[keyPath: field] = value
+                prefs.setRule(rule, for: kind)
+            }
+        )
     }
 }
 
