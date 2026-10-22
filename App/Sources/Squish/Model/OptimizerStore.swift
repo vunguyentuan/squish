@@ -37,12 +37,13 @@ final class OptimizerStore {
     // MARK: Intake
 
     /// Queues images (folders are expanded). Returns the batch id, or nil if nothing was usable.
+    /// `quietly` skips the error beep, for files that arrive on their own (watched folders).
     @discardableResult
-    func add(_ urls: [URL]) -> UUID? {
+    func add(_ urls: [URL], quietly: Bool = false) -> UUID? {
         let pending = Set(jobs.filter { !$0.state.isFinished }.map(\.sourceURL))
         let images = FileWork.collectFiles(from: urls).filter { !pending.contains($0) }
         guard !images.isEmpty else {
-            NSSound.beep()
+            if !quietly { NSSound.beep() }
             return nil
         }
         let batch = UUID()

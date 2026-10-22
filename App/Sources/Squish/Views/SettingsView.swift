@@ -7,6 +7,7 @@ struct SettingsView: View {
             Tab("General", systemImage: "gearshape") { GeneralSettings() }
             Tab("Optimization", systemImage: "slider.horizontal.3") { OptimizationSettings() }
             Tab("Formats", systemImage: "photo.on.rectangle.angled") { FormatSettings() }
+            Tab("Automation", systemImage: "gearshape.2") { AutomationSettings() }
             Tab("About", systemImage: "info.circle") { AboutSettings() }
         }
         .frame(width: 520)
@@ -217,6 +218,63 @@ private struct FormatSettings: View {
                 prefs.setRule(rule, for: kind)
             }
         )
+    }
+}
+
+private struct AutomationSettings: View {
+    @Environment(Preferences.self) private var prefs
+    @State private var selection: URL?
+
+    var body: some View {
+        @Bindable var prefs = prefs
+        Form {
+            Section {
+                List(selection: $selection) {
+                    ForEach(prefs.watchedFolders, id: \.self) { folder in
+                        Label(folder.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"), systemImage: "folder")
+                            .tag(folder)
+                    }
+                }
+                .frame(minHeight: 80)
+                .overlay {
+                    if prefs.watchedFolders.isEmpty {
+                        Text("No watched folders").foregroundStyle(.tertiary)
+                    }
+                }
+                HStack {
+                    Button("Add Folder…", action: addFolder)
+                    Button("Watch Screenshots") { watch(FolderWatcher.screenshotsFolder) }
+                        .disabled(prefs.watchedFolders.contains(FolderWatcher.screenshotsFolder.standardizedFileURL))
+                    Spacer()
+                    Button("Remove", role: .destructive) {
+                        prefs.watchedFolders.removeAll { $0 == selection }
+                        selection = nil
+                    }
+                    .disabled(selection == nil)
+                }
+            } header: {
+                Text("Watched folders")
+            } footer: {
+                Text("New images and videos saved into these folders are optimized automatically with your current settings. Subfolders aren't watched.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private func addFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.allowsMultipleSelection = true
+        panel.prompt = String(localized: "Watch")
+        if panel.runModal() == .OK { panel.urls.forEach(watch) }
+    }
+
+    private func watch(_ folder: URL) {
+        let folder = folder.standardizedFileURL
+        if !prefs.watchedFolders.contains(folder) { prefs.watchedFolders.append(folder) }
     }
 }
 

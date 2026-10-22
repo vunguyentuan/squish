@@ -59,6 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         ShelfController.shared.startMonitoring()
         DockIcon.shared.startMonitoring()
+        FolderWatcher.shared.update()
         NSApp.servicesProvider = services
         NSUpdateDynamicServices()
     }

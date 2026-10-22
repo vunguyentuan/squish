@@ -212,10 +212,27 @@ nonisolated enum FileWork {
         } else {
             outcome.outputURL = place.destination
         }
+        if let output = outcome.outputURL { markOptimized(output) }
         outcome.kind = .optimized
     }
 
-    private static func fileSize(_ url: URL) -> Int64 {
+    /// Extended attribute on every file Squish writes, so watched folders don't pick it up again.
+    private static let optimizedAttribute = "dev.squish.optimized"
+
+    static func markOptimized(_ url: URL) {
+        let value: [UInt8] = [0x31]
+        _ = url.withUnsafeFileSystemRepresentation { path in
+            path.map { setxattr($0, optimizedAttribute, value, value.count, 0, 0) }
+        }
+    }
+
+    static func isMarkedOptimized(_ url: URL) -> Bool {
+        url.withUnsafeFileSystemRepresentation { path in
+            path.map { getxattr($0, optimizedAttribute, nil, 0, 0, 0) >= 0 } ?? false
+        }
+    }
+
+    static func fileSize(_ url: URL) -> Int64 {
         Int64((try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
     }
 
@@ -290,7 +307,7 @@ nonisolated enum FileWork {
         return found
     }
 
-    private static func isAccepted(_ url: URL) -> Bool {
+    static func isAccepted(_ url: URL) -> Bool {
         let name = url.lastPathComponent
         return !name.hasPrefix(".") && !name.contains(".squish-")
             && ImageFormat.acceptedExtensions.contains(url.pathExtension.lowercased())

@@ -139,6 +139,9 @@ final class Preferences {
     var formatRules: [FormatKind: FormatRule] {
         didSet { save(try? JSONEncoder().encode(formatRules.filter { !$0.value.isEmpty }), "formatRules") }
     }
+    var watchedFolders: [URL] {
+        didSet { save(watchedFolders.map(\.path), "watchedFolders"); FolderWatcher.shared.update() }
+    }
 
     static let resizeChoices = [0, 3840, 2560, 1920, 1600, 1280, 1024, 800]
 
@@ -174,6 +177,7 @@ final class Preferences {
         maxDimension = defaults.integer(forKey: "maxDimension")
         formatRules = defaults.data(forKey: "formatRules")
             .flatMap { try? JSONDecoder().decode([FormatKind: FormatRule].self, from: $0) } ?? [:]
+        watchedFolders = (defaults.stringArray(forKey: "watchedFolders") ?? []).map { URL(fileURLWithPath: $0) }
     }
 
     var options: OptimizeOptions {
