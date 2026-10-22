@@ -1,6 +1,20 @@
 import AppKit
 import Observation
 
+/// Per-job settings that replace the user's preferences (from a Shortcuts action).
+struct JobOverride {
+    var preset: Preset?
+    var output: OutputFormat?
+    var maxDimension: Int?
+    var saveMode: SaveMode?
+
+    func apply(to options: inout OptimizeOptions) {
+        if let (q, e, l) = preset?.values { (options.quality, options.effort, options.lossless) = (q, e, l) }
+        if let output { options.output = output }
+        if let maxDimension { options.maxDimension = max(0, maxDimension) }
+    }
+}
+
 @Observable
 final class ImageJob: Identifiable {
     enum State: Equatable {
@@ -38,6 +52,8 @@ final class ImageJob: Identifiable {
     var thumbnail: NSImage?
     /// Set by "Convert to…" on a single row; overrides the global output format.
     var outputOverride: OutputFormat?
+    /// Settings from a Shortcuts action, which win over Preferences.
+    var override: JobOverride?
 
     init(url: URL, batch: UUID) {
         sourceURL = url

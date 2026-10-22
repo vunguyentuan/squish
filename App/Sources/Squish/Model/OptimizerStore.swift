@@ -39,7 +39,7 @@ final class OptimizerStore {
     /// Queues images (folders are expanded). Returns the batch id, or nil if nothing was usable.
     /// `quietly` skips the error beep, for files that arrive on their own (watched folders).
     @discardableResult
-    func add(_ urls: [URL], quietly: Bool = false) -> UUID? {
+    func add(_ urls: [URL], quietly: Bool = false, override: JobOverride? = nil) -> UUID? {
         let pending = Set(jobs.filter { !$0.state.isFinished }.map(\.sourceURL))
         let images = FileWork.collectFiles(from: urls).filter { !pending.contains($0) }
         guard !images.isEmpty else {
@@ -48,12 +48,22 @@ final class OptimizerStore {
         }
         let batch = UUID()
         let newJobs = images.map { ImageJob(url: $0, batch: batch) }
+        newJobs.forEach { $0.override = override }
         withAnimation(.spring(response: 0.45, dampingFraction: 0.82)) {
             jobs.insert(contentsOf: newJobs, at: 0)
         }
         newJobs.forEach(loadThumbnail)
         pump()
         return batch
+    }
+
+    /// Queues files and waits until all of them are done (for Shortcuts).
+    func optimize(_ urls: [URL], override: JobOverride?) async -> [ImageJob] {
+        guard let batch = add(urls, quietly: true, override: override) else { return [] }
+        while jobs(in: batch).contains(where: { !$0.state.isFinished }) {
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+        return jobs(in: batch)
     }
 
     func clearFinished() {
@@ -123,12 +133,13 @@ final class OptimizerStore {
         if job.inputFormat.isVideo { runningVideo = true }
         withAnimation(.smooth) { job.state = .working }
         var options = prefs.options(for: job.inputFormat)
+        job.override?.apply(to: &options)
         if let override = job.outputOverride { options.output = override }
         let order = WorkOrder(
             source: job.sourceURL,
             inputFormat: job.inputFormat,
             options: options,
-            saveMode: prefs.saveMode,
+            saveMode: job.override?.saveMode ?? prefs.saveMode,
             copySuffix: prefs.copySuffix,
             folder: prefs.outputFolder
         )

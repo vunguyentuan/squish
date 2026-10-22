@@ -11,10 +11,20 @@ echo "▸ Building Rust engine"
 cargo build --release --manifest-path "$ROOT/core/Cargo.toml"
 
 echo "▸ Building SwiftUI app ($CONFIG)"
-# Homebrew's prebuilt Rust std targets the host OS; those linker notes are harmless.
+# The compiler also writes the App Intents' compile-time values, which Xcode would normally
+# turn into Metadata.appintents (what Shortcuts reads) — SwiftPM doesn't, so we do it below.
+INTENTS="$ROOT/build/intents"
+mkdir -p "$INTENTS"
+CONST_VALUES="$INTENTS/Squish.swiftconstvalues"
+SWIFT_FLAGS=(
+    -Xswiftc -emit-const-values-path -Xswiftc "$CONST_VALUES"
+    -Xswiftc -Xfrontend -Xswiftc -const-gather-protocols-file -Xswiftc -Xfrontend -Xswiftc "$ROOT/scripts/appintents-protocols.json"
+)
+[ "$CONFIG" = "release" ] || SWIFT_FLAGS+=(-Xswiftc -wmo)
 # Hide the harmless "built for newer macOS" linker noise from Homebrew's prebuilt Rust std,
 # but still fail the build when swift build fails.
-swift build --package-path "$ROOT/App" -c "$CONFIG" 2>&1 | { grep -v "was built for newer 'macOS' version" || true; }
+set -o pipefail
+swift build --package-path "$ROOT/App" -c "$CONFIG" "${SWIFT_FLAGS[@]}" 2>&1 | { grep -v "was built for newer 'macOS' version" || true; }
 BIN="$(swift build --package-path "$ROOT/App" -c "$CONFIG" --show-bin-path)/Squish"
 [ -x "$BIN" ] || { echo "Swift build failed"; exit 1; }
 
@@ -42,6 +52,28 @@ if [ ! -f "$ICON_CACHE" ] || [ "$ROOT/scripts/make-icon.swift" -nt "$ICON_CACHE"
 fi
 cp "$ICON_CACHE" "$APP/Contents/Resources/AppIcon.icns"
 cp "$ROOT/LICENSE" "$APP/Contents/Resources/LICENSE.txt"
+
+echo "▸ Generating App Intents metadata"
+if [ -f "$CONST_VALUES" ]; then
+    find "$ROOT/App/Sources/Squish" -name '*.swift' > "$INTENTS/sources.txt"
+    echo "$CONST_VALUES" > "$INTENTS/constvalues.txt"
+    xcrun appintentsmetadataprocessor \
+        --output "$APP/Contents/Resources" \
+        --toolchain-dir "$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain" \
+        --module-name Squish \
+        --sdk-root "$(xcrun --sdk macosx --show-sdk-path)" \
+        --xcode-version "$(xcodebuild -version | awk '/Build version/ { print $3 }')" \
+        --platform-family macOS \
+        --deployment-target 26.0 \
+        --target-triple "$(uname -m)-apple-macos26.0" \
+        --source-file-list "$INTENTS/sources.txt" \
+        --swift-const-vals-list "$INTENTS/constvalues.txt" \
+        --binary-file "$BIN" \
+        --force --quiet-warnings 2>&1 | { grep -iE "error|warning" || true; }
+    [ -d "$APP/Contents/Resources/Metadata.appintents" ] || { echo "App Intents metadata missing"; exit 1; }
+else
+    echo "  (no const values: the build was up to date; run make clean for Shortcuts metadata)"
+fi
 
 if [ "$CONFIG" = "release" ]; then strip -x "$APP/Contents/MacOS/Squish"; fi
 codesign --force --deep --sign - --timestamp=none "$APP" >/dev/null

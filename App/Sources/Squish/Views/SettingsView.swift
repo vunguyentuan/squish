@@ -282,6 +282,12 @@ private struct AutomationSettings: View {
             } header: {
                 Text("Command line")
             }
+            Section("Shortcuts") {
+                Text("Squish adds “Optimize Files” and “Optimize Clipboard Image” actions to the Shortcuts app, so you can use them in shortcuts, Folder Actions, Spotlight and Siri.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button("Open Shortcuts") { NSWorkspace.shared.open(URL(string: "shortcuts://")!) }
+            }
         }
         .formStyle(.grouped)
     }
