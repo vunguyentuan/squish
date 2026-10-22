@@ -16,7 +16,7 @@ enum Fmt {
     }
 
     static func items(_ count: Int) -> String {
-        "\(count) item\(count == 1 ? "" : "s")"
+        String(localized: "\(count) items")
     }
 }
 

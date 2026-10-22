@@ -98,7 +98,7 @@ struct ShelfView: View {
                 if finished {
                     Text(saved > 0 ? "Saved \(Fmt.bytes(saved))" : "Already Optimal")
                         .font(.headline)
-                    Text(saved > 0 ? "\(Fmt.percent(Double(saved) / Double(max(original, 1)))) smaller · drag to use" : Fmt.items(jobs.count))
+                    Text(saved > 0 ? String(localized: "\(Fmt.percent(Double(saved) / Double(max(original, 1)))) smaller · drag to use") : Fmt.items(jobs.count))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -133,7 +133,7 @@ struct ShelfView: View {
         .padding(8)
     }
 
-    private func shelfButton(_ title: String, _ symbol: String, action: @escaping () -> Void) -> some View {
+    private func shelfButton(_ title: LocalizedStringKey, _ symbol: String, action: @escaping () -> Void) -> some View {
         Button(title, systemImage: symbol, action: action)
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)

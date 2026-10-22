@@ -72,7 +72,7 @@ nonisolated enum OutputFormat: String, Sendable, CaseIterable, Identifiable, Cod
     }
     var title: String {
         switch self {
-        case .original: "Keep Format"
+        case .original: String(localized: "Keep Format")
         case .webp: "WebP"
         case .avif: "AVIF"
         case .jpeg: "JPEG"
@@ -145,7 +145,7 @@ nonisolated enum Engine {
         }
         defer { squish_result_free(&raw) }
 
-        let message = raw.message.map { String(cString: $0) }
+        let message = raw.message.map { localized(String(cString: $0)) }
         let status: EngineResult.Status = switch raw.status {
         case SQUISH_OK: .optimized
         case SQUISH_ALREADY_OPTIMAL: .alreadyOptimal
@@ -161,6 +161,20 @@ nonisolated enum Engine {
             elapsedMs: Int(raw.elapsed_ms),
             note: raw.status == SQUISH_OK ? message : nil
         )
+    }
+
+    /// The engine speaks English; translate the messages people actually see.
+    private static func localized(_ message: String) -> String {
+        switch message {
+        case "Converted file is larger than the original": String(localized: "Converted file is larger than the original")
+        case "Resized file is larger than the original": String(localized: "Resized file is larger than the original")
+        case "Animated GIFs can only be converted to WebP or MP4": String(localized: "Animated GIFs can only be converted to WebP or MP4")
+        case "Animated WebP is not supported yet": String(localized: "Animated WebP is not supported yet")
+        case "CMYK JPEG is kept lossless": String(localized: "CMYK JPEG is kept lossless")
+        case "Not an image Squish understands": String(localized: "Not an image Squish understands")
+        case "The optimizer crashed on this file": String(localized: "The optimizer crashed on this file")
+        default: message
+        }
     }
 
     /// Decodes HEIC/AVIF (or anything ImageIO reads) into an upright, lossless PNG.

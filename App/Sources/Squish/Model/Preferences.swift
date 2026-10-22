@@ -8,19 +8,19 @@ enum Preset: String, CaseIterable, Identifiable, Codable {
 
     var title: String {
         switch self {
-        case .lossless: "Lossless"
-        case .balanced: "Balanced"
-        case .maximum: "Smallest"
-        case .custom: "Custom"
+        case .lossless: String(localized: "Lossless")
+        case .balanced: String(localized: "Balanced")
+        case .maximum: String(localized: "Smallest")
+        case .custom: String(localized: "Custom")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .lossless: "Pixel-perfect"
-        case .balanced: "Invisible loss"
-        case .maximum: "Max savings"
-        case .custom: "Your settings"
+        case .lossless: String(localized: "Pixel-perfect")
+        case .balanced: String(localized: "Invisible loss")
+        case .maximum: String(localized: "Max savings")
+        case .custom: String(localized: "Your settings")
         }
     }
 
@@ -50,16 +50,16 @@ enum SaveMode: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .replace: "Replace originals"
-        case .copy: "Save copies alongside"
-        case .folder: "Save to folder"
+        case .replace: String(localized: "Replace originals")
+        case .copy: String(localized: "Save copies alongside")
+        case .folder: String(localized: "Save to folder")
         }
     }
     var detail: String {
         switch self {
-        case .replace: "Originals go to the Trash, so you can always restore them."
-        case .copy: "Adds a suffix and keeps the original untouched."
-        case .folder: "Writes optimized files into one folder."
+        case .replace: String(localized: "Originals go to the Trash, so you can always restore them.")
+        case .copy: String(localized: "Adds a suffix and keeps the original untouched.")
+        case .folder: String(localized: "Writes optimized files into one folder.")
         }
     }
 }

@@ -48,10 +48,10 @@ nonisolated enum FileWork {
 
         if !converting && !order.inputFormat.isOptimizable {
             let reason = switch order.inputFormat {
-            case .heic, .avif: "\(order.inputFormat.label) is already compact. Pick an output format to convert it."
-            case .unknown: "Not a file Squish understands."
+            case .heic, .avif: String(localized: "\(order.inputFormat.label) is already compact. Pick an output format to convert it.")
+            case .unknown: String(localized: "Not a file Squish understands.")
             case .gif: String(localized: "GIF can't be optimized in place. Convert it to WebP or MP4.")
-            default: "\(order.inputFormat.label) can't be optimized in place. Pick an output format to convert it."
+            default: String(localized: "\(order.inputFormat.label) can't be optimized in place. Pick an output format to convert it.")
             }
             return WorkOutcome(kind: .skipped(reason))
         }
@@ -67,7 +67,7 @@ nonisolated enum FileWork {
             do {
                 _ = try Engine.decodeWithImageIO(source, to: png)
             } catch {
-                return WorkOutcome(kind: .failed("macOS couldn't decode this \(order.inputFormat.label)."))
+                return WorkOutcome(kind: .failed(String(localized: "macOS couldn't decode this \(order.inputFormat.label).")))
             }
             engineInput = png
         }
@@ -100,7 +100,7 @@ nonisolated enum FileWork {
     /// Videos are re-encoded to HEVC in their own container (MOV stays MOV, MP4 stays MP4).
     private static func runVideo(_ order: WorkOrder, progress: @escaping @Sendable (Double) -> Void) async -> WorkOutcome {
         guard !order.options.lossless else {
-            return WorkOutcome(kind: .skipped("Videos can't be shrunk losslessly. Choose Balanced or Smallest."))
+            return WorkOutcome(kind: .skipped(String(localized: "Videos can't be shrunk losslessly. Choose Balanced or Smallest.")))
         }
         let fm = FileManager.default
         let source = order.source
@@ -123,7 +123,7 @@ nonisolated enum FileWork {
             outcome.pixelSize = result.pixelSize
             outcome.detail = result.detail
         } catch VideoWork.Failure.alreadySquished {
-            outcome.detail = "Optimized by Squish before"
+            outcome.detail = String(localized: "Optimized by Squish before")
             return outcome
         } catch {
             try? fm.removeItem(at: place.destination)
@@ -206,7 +206,7 @@ nonisolated enum FileWork {
                 _ = try FileManager.default.replaceItemAt(source, withItemAt: place.destination)
                 outcome.outputURL = source
             } catch {
-                outcome = WorkOutcome(kind: .failed("Couldn't replace the original: \(error.localizedDescription)"))
+                outcome = WorkOutcome(kind: .failed(String(localized: "Couldn't replace the original: \(error.localizedDescription)")))
                 return
             }
         } else {

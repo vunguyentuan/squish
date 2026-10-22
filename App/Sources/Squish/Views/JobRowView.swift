@@ -116,12 +116,14 @@ struct JobRow: View {
 
     private var detailText: String {
         switch job.state {
-        case .queued: return "\(formats) · Waiting"
-        case .working: return "\(formats) · Optimizing…"
+        case .queued: return String(localized: "\(formats) · Waiting")
+        case .working: return String(localized: "\(formats) · Optimizing…")
         case .skipped(let reason), .failed(let reason): return reason
-        case .restored: return "\(formats) · Original restored"
+        case .restored: return String(localized: "\(formats) · Original restored")
         case .alreadyOptimal:
-            return job.inputFormat.isVideo ? "\(formats) · Already efficiently encoded" : "\(formats) · Already optimal"
+            return job.inputFormat.isVideo
+                ? String(localized: "\(formats) · Already efficiently encoded")
+                : String(localized: "\(formats) · Already optimal")
         case .optimized:
             var parts = [formats]
             if let size = job.pixelSize { parts.append("\(Int(size.width))×\(Int(size.height))") }
@@ -199,7 +201,7 @@ struct ConvertMenu: View {
         .help("Convert this image to a modern format")
     }
 
-    private func hint(for output: OutputFormat) -> String {
+    private func hint(for output: OutputFormat) -> LocalizedStringKey {
         switch output {
         case .webp: "Small, works everywhere"
         case .avif: "Smallest, slower to encode"

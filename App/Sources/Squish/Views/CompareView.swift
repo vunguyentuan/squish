@@ -99,7 +99,7 @@ struct CompareView: View {
         .allowsHitTesting(false)
     }
 
-    private func tag(_ title: String, _ value: String) -> some View {
+    private func tag(_ title: LocalizedStringKey, _ value: String) -> some View {
         HStack(spacing: 6) {
             Text(title).fontWeight(.semibold)
             Text(value).monospacedDigit().foregroundStyle(.secondary)

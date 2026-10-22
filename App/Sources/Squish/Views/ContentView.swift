@@ -111,6 +111,6 @@ private struct StatusBar: View {
     private var summary: String {
         let processed = store.processedJobs.count
         guard processed > 0 else { return Fmt.items(store.jobs.count) }
-        return "\(Fmt.items(store.jobs.count)) · \(Fmt.percent(store.savedFraction)) smaller"
+        return String(localized: "\(Fmt.items(store.jobs.count)) · \(Fmt.percent(store.savedFraction)) smaller")
     }
 }

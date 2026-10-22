@@ -38,7 +38,7 @@ private struct GeneralSettings: View {
                         }
                     }
                 }
-                Text(prefs.saveMode.detail + " Converted files (WebP, AVIF, JPEG) are always saved next to the original.")
+                Text("\(prefs.saveMode.detail) Converted files (WebP, AVIF, JPEG) are always saved next to the original.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -80,7 +80,7 @@ private struct GeneralSettings: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.canCreateDirectories = true
-        panel.prompt = "Use Folder"
+        panel.prompt = String(localized: "Use Folder")
         if panel.runModal() == .OK { prefs.outputFolder = panel.url }
     }
 }
@@ -133,7 +133,7 @@ private struct OptimizationSettings: View {
                 engineRow("AVIF", "rav1e AV1 encoder via ravif")
                 engineRow("SVG", "OXVG, a Rust port of SVGO")
                 engineRow("GIF", "Animated GIFs become animated WebP (libwebp) or H.264 MP4 (Apple's hardware encoder)")
-                engineRow("Video", "HEVC via Apple's hardware encoder (speed-tuned unless Effort is Maximum); HDR, rotation and audio are kept")
+                engineRow(String(localized: "Video"), "HEVC via Apple's hardware encoder (speed-tuned unless Effort is Maximum); HDR, rotation and audio are kept")
                 Text("Squish never makes a file bigger: if it can't win, the original is left untouched. Videos must shrink by at least 10% to be replaced.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -142,7 +142,7 @@ private struct OptimizationSettings: View {
         .formStyle(.grouped)
     }
 
-    private func engineRow(_ format: String, _ detail: String) -> some View {
+    private func engineRow(_ format: String, _ detail: LocalizedStringKey) -> some View {
         LabeledContent(format) {
             Text(detail).font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.trailing)
         }

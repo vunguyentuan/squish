@@ -52,6 +52,7 @@ if [ ! -f "$ICON_CACHE" ] || [ "$ROOT/scripts/make-icon.swift" -nt "$ICON_CACHE"
 fi
 cp "$ICON_CACHE" "$APP/Contents/Resources/AppIcon.icns"
 cp "$ROOT/LICENSE" "$APP/Contents/Resources/LICENSE.txt"
+xcrun xcstringstool compile "$ROOT/App/Resources/Localizable.xcstrings" --output-directory "$APP/Contents/Resources"
 
 echo "▸ Generating App Intents metadata"
 if [ -f "$CONST_VALUES" ]; then

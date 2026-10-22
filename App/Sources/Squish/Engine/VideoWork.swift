@@ -24,11 +24,16 @@ nonisolated enum VideoWork {
 
         var errorDescription: String? {
             switch self {
-            case .alreadySquished: "Already optimized by Squish."
-            case .noVideoTrack: "This file has no video track."
-            case .unsupportedTrack(let kind): "Can't keep this video's \(kind) in the same container."
-            case .reading(let error): "macOS couldn't read this video" + (error.map { ": \($0.localizedDescription)" } ?? ".")
-            case .writing(let error): "Couldn't write the video" + (error.map { ": \($0.localizedDescription)" } ?? ".")
+            case .alreadySquished: String(localized: "Already optimized by Squish.")
+            case .noVideoTrack: String(localized: "This file has no video track.")
+            case .unsupportedTrack(let kind):
+                kind == "audio"
+                    ? String(localized: "Can't keep this video's audio in the same container.")
+                    : String(localized: "Can't keep this video's picture in the same container.")
+            case .reading(let error):
+                error.map { String(localized: "macOS couldn't read this video: \($0.localizedDescription)") } ?? String(localized: "macOS couldn't read this video.")
+            case .writing(let error):
+                error.map { String(localized: "Couldn't write the video: \($0.localizedDescription)") } ?? String(localized: "Couldn't write the video.")
             }
         }
     }
