@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Squish — Image & Video Optimizer for Mac</title>
-<meta name="description" content="Squish is a free, open-source Mac app that makes images and videos dramatically smaller with the best encoders available. PNG, JPEG, WebP, SVG, HEIC, AVIF, MOV and MP4.">
+<meta name="description" content="Squish is a free, open-source Mac app that makes images and videos dramatically smaller with the best encoders available. PNG, JPEG, WebP, GIF, SVG, HEIC, AVIF, MOV and MP4.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Squish — Smaller files. Same pixels.">
 <meta property="og:description" content="A free, open-source Mac app that shrinks images and videos with mozjpeg, libimagequant, oxipng and Apple's hardware HEVC encoder.">
@@ -101,6 +101,8 @@
     margin: 0; padding: 18px 20px; border-radius: 10px; background: var(--soft); border: 1px solid var(--line);
     font: 14px/1.7 ui-monospace, "SF Mono", Menlo, monospace; overflow-x: auto;
   }
+  .split pre { align-self: start; font-size: 13px; }
+  .split .features { grid-template-columns: 1fr; gap: 22px; margin-top: 32px; }
   .download { text-align: center; }
   .download .intro { margin: 0 auto 32px; }
 
@@ -124,6 +126,7 @@
     <a class="brand" href="#"><img src="assets/icon-512.webp" alt="" width="22" height="22">Squish</a>
     <span class="spacer"></span>
     <a class="link" href="#features">Features</a>
+    <a class="link" href="#automation">Automation</a>
     <a class="link" href="#engines">Engines</a>
     <a class="link" href="https://github.com/vunguyentuan/squish">GitHub</a>
     <a class="button small" href="https://github.com/vunguyentuan/squish/releases/latest/download/Squish.dmg">Download</a>
@@ -187,8 +190,32 @@
       <div><h3>Never bigger</h3><p>If Squish can't make a file smaller, it leaves the original exactly as it was.</p></div>
       <div><h3>Pixel-perfect mode</h3><p>The Lossless preset shrinks PNG and JPEG files without changing a single pixel.</p></div>
       <div><h3>Convert in a click</h3><p>Turn HEIC, TIFF, PNG or JPEG into WebP, AVIF or JPEG. Compare before and after with a slider.</p></div>
+      <div><h3>Resize to fit</h3><p>Pick a maximum size like 2560 px and larger images and videos are scaled down as they're optimized.</p></div>
+      <div><h3>GIFs, finally</h3><p>Turn animated GIFs into animated WebP or MP4 video, usually 80–95% smaller, with every frame's timing kept.</p></div>
+      <div><h3>Rules per format</h3><p>Keep PNGs lossless, turn HEIC into JPEG and GIFs into MP4, each with its own preset.</p></div>
       <div><h3>Private</h3><p>No accounts, no uploads, no analytics. A native SwiftUI app with a Rust engine.</p></div>
     </div>
+  </div>
+</section>
+
+<section id="automation">
+  <div class="wrap split">
+    <div>
+      <h2>Works on its own.</h2>
+      <p class="intro">Set it up once and Squish keeps your files small without a single drag.</p>
+      <div class="features">
+        <div><h3>Watched folders</h3><p>New screenshots and exports saved to a folder are optimized the moment they land.</p></div>
+        <div><h3>Clipboard in one key</h3><p>Press ⌃⌥⌘V to shrink a copied screenshot before you paste it into Slack, GitHub or Mail.</p></div>
+        <div><h3>Shortcuts</h3><p>“Optimize Files” and “Optimize Clipboard Image” actions for Shortcuts, Spotlight and Siri.</p></div>
+        <div><h3>Command line</h3><p>The same engine as <code>squish</code> in Terminal, for build scripts and CI. Install it from Settings → Automation.</p></div>
+      </div>
+    </div>
+    <pre>$ squish -i img/
+✓ img/card.jpg  90 KB → 30 KB  66.9% smaller
+✓ img/app.png  423 KB → 68 KB  84.0% smaller
+✓ img/icon.png  653 KB → 356 KB  45.5% smaller
+
+3 files · Saved 712 KB (61.1% smaller) · 0 failed</pre>
   </div>
 </section>
 
@@ -202,7 +229,9 @@
       <tr><td>WebP</td><td>libwebp with sharp YUV</td></tr>
       <tr><td>AVIF</td><td>rav1e AV1 encoder</td></tr>
       <tr><td>SVG</td><td>OXVG, a Rust port of SVGO</td></tr>
+      <tr><td>GIF</td><td>Animated WebP with libwebp, or H.264 MP4 on Apple's hardware encoder</td></tr>
       <tr><td>Video</td><td>HEVC on Apple's hardware encoder; HDR stays 10-bit</td></tr>
+      <tr><td>Resize</td><td>Lanczos3 with SIMD via fast_image_resize</td></tr>
     </table>
   </div>
 </section>
@@ -222,7 +251,7 @@ make run</pre>
 <section class="download">
   <div class="wrap">
     <h2>Get Squish.</h2>
-    <p class="intro">Free. Requires macOS 26 or later on Apple Silicon.</p>
+    <p class="intro">Free. In English, Tiếng Việt, 日本語, 简体中文, Español, Français and Deutsch. Requires macOS 26 or later on Apple Silicon.</p>
     <a class="button" href="https://github.com/vunguyentuan/squish/releases/latest/download/Squish.dmg">Download for Mac</a>
   </div>
 </section>
