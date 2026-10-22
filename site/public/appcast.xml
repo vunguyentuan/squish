@@ -4,17 +4,17 @@
     <title>Squish</title>
     <link>https://squish.madebyvu.com/appcast.xml</link>
     <item>
-      <title>Squish 1.3.1</title>
-      <pubDate>Thu, 22 Oct 2026 09:17:16 +0000</pubDate>
-      <sparkle:version>5</sparkle:version>
-      <sparkle:shortVersionString>1.3.1</sparkle:shortVersionString>
+      <title>Squish 1.3.2</title>
+      <pubDate>Thu, 22 Oct 2026 12:40:23 +0000</pubDate>
+      <sparkle:version>6</sparkle:version>
+      <sparkle:shortVersionString>1.3.2</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
       <sparkle:fullReleaseNotesLink>https://github.com/vunguyentuan/squish/releases</sparkle:fullReleaseNotesLink>
       <description sparkle:format="markdown"><![CDATA[
-- The drop shelf no longer shows a square shadow around its card.
-- If you shake to open the drop shelf and then drop your files somewhere else, the shelf now closes right away.
+- The drop shelf stays open while you're still holding the files, and closes quickly after you let go somewhere else.
+- The drop shelf no longer flickers or replays its opening animation when you drag files over it.
 ]]></description>
-      <enclosure url="https://github.com/vunguyentuan/squish/releases/download/v1.3.1/Squish.dmg" type="application/octet-stream" sparkle:edSignature="t5BEK75uHxKEIuFH2MFT+nSRRt6rrcL52liMX3T4H1KjapQ2d9P2ti9xzdktixusDReYOly3C7IZfs31ONfeCQ==" length="9266710" />
+      <enclosure url="https://github.com/vunguyentuan/squish/releases/download/v1.3.2/Squish.dmg" type="application/octet-stream" sparkle:edSignature="p+MuH/ab0+o3XFkWN3DHN0728oui8jEcDgZZQx23ZrZU6NT7uOK6vcgRy4pRohfnCfouIazquVZroQE/1xmBCg==" length="9268562" />
     </item>
   </channel>
 </rss>
