@@ -76,6 +76,9 @@ struct JobList: View {
                 }
             }
             Divider()
+            Button("Copy Summary") { BatchReport.copySummary(jobs) }
+            Button("Export Report…") { BatchReport.exportCSV(jobs) }
+            Divider()
             Button("Remove from List") { jobs.forEach(store.remove) }
                 .disabled(!jobs.contains { $0.state.isFinished })
         }

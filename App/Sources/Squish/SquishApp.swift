@@ -26,6 +26,13 @@ struct SquishApp: App {
             CommandGroup(after: .newItem) {
                 Button("Show Drop Shelf") { ShelfController.shared.show() }
                     .keyboardShortcut("d", modifiers: [.command, .shift])
+                Divider()
+                Button("Copy Summary") { BatchReport.copySummary(store.jobs) }
+                    .keyboardShortcut("c", modifiers: [.command, .shift])
+                    .disabled(store.finishedCount == 0)
+                Button("Export Report…") { BatchReport.exportCSV(store.jobs) }
+                    .keyboardShortcut("e")
+                    .disabled(store.finishedCount == 0)
             }
         }
 
