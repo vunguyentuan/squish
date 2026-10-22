@@ -4,16 +4,24 @@
     <title>Squish</title>
     <link>https://squish.madebyvu.com/appcast.xml</link>
     <item>
-      <title>Squish 1.2.0</title>
-      <pubDate>Wed, 21 Oct 2026 14:14:05 +0000</pubDate>
-      <sparkle:version>3</sparkle:version>
-      <sparkle:shortVersionString>1.2.0</sparkle:shortVersionString>
+      <title>Squish 1.3.0</title>
+      <pubDate>Thu, 22 Oct 2026 00:18:09 +0000</pubDate>
+      <sparkle:version>4</sparkle:version>
+      <sparkle:shortVersionString>1.3.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
       <sparkle:fullReleaseNotesLink>https://github.com/vunguyentuan/squish/releases</sparkle:fullReleaseNotesLink>
       <description sparkle:format="markdown"><![CDATA[
-- **Check for Updates.** Squish now updates itself. It checks automatically (turn that off in Settings → General → Updates), or choose Check for Updates… from the Squish menu or the menu bar item.
+- **Resize to fit.** Set a maximum size (e.g. 2560 px) in the toolbar options and larger images and videos are scaled down as they're optimized.
+- **Watched folders.** Settings → Automation: new files saved to a folder are optimized automatically. One click watches your Screenshots folder.
+- **Optimize the clipboard.** Press ⌃⌥⌘V to shrink a copied screenshot before you paste it into Slack, GitHub or Mail.
+- **Animated GIFs.** Convert them to animated WebP or to MP4 video, usually 80–95% smaller.
+- **Per-format rules.** Settings → Formats: keep PNGs lossless, turn HEIC into JPEG, send GIFs to MP4, each with its own preset.
+- **Shortcuts.** New "Optimize Files" and "Optimize Clipboard Image" actions for the Shortcuts app, Spotlight and Siri.
+- **Command line.** Install the `squish` tool from Settings → Automation (`squish --help`).
+- **Reports.** Copy a summary (⇧⌘C) or export a CSV (⌘E) of a batch, and see how much Squish has saved you all time.
+- Squish is now available in Vietnamese, Spanish, French, German, Japanese and Simplified Chinese.
 ]]></description>
-      <enclosure url="https://github.com/vunguyentuan/squish/releases/download/v1.2.0/Squish.dmg" type="application/octet-stream" sparkle:edSignature="aSCrxdO4Cd6+DIjrbh4CsAx5cTtL8A7pFiXMKkj6Kk9OJ1LFuLMRazjqJgnEIZXF6Ehb8n5spEI1/xO8+R1KCg==" length="8592939" />
+      <enclosure url="https://github.com/vunguyentuan/squish/releases/download/v1.3.0/Squish.dmg" type="application/octet-stream" sparkle:edSignature="X/Vgcxz3g1L/xIARoidvLOI1RXOjmaYPm9SBVXfC8YlYgVXU8fS6Dvytb5UK2PxMePt1lVV2QREiiFHo/P1ZAQ==" length="9266853" />
     </item>
   </channel>
 </rss>
