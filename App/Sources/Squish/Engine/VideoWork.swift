@@ -47,6 +47,8 @@ nonisolated enum VideoWork {
         _ source: URL,
         to destination: URL,
         quality: Double,
+        /// Longest edge in pixels; larger videos are scaled down. 0 keeps the resolution.
+        maxDimension: Int,
         /// Lets the encoder take shortcuts: ~1.75× faster for files ~6% larger at the same quality.
         prioritizeSpeed: Bool,
         keepMetadata: Bool,
@@ -103,10 +105,12 @@ nonisolated enum VideoWork {
                 : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
         ])
         videoOutput.alwaysCopiesSampleData = false
+        let encoded = scaledSize(natural, maxDimension: maxDimension)
         var videoSettings: [String: Any] = [
             AVVideoCodecKey: AVVideoCodecType.hevc,
-            AVVideoWidthKey: Int(natural.width),
-            AVVideoHeightKey: Int(natural.height),
+            AVVideoWidthKey: Int(encoded.width),
+            AVVideoHeightKey: Int(encoded.height),
+            AVVideoScalingModeKey: AVVideoScalingModeResizeAspect,
             AVVideoCompressionPropertiesKey: [
                 AVVideoQualityKey: quality,
                 kVTCompressionPropertyKey_PrioritizeEncodingSpeedOverQuality as String: prioritizeSpeed,
@@ -188,12 +192,21 @@ nonisolated enum VideoWork {
         await writer.finishWriting()
         guard writer.status == .completed else { throw Failure.writing(writer.error) }
 
-        let shown = natural.applying(transform)
+        let shown = encoded.applying(transform)
         let codec = format.map { codecName(CMFormatDescriptionGetMediaSubType($0)) } ?? "Video"
         return Result(
             pixelSize: CGSize(width: abs(shown.width).rounded(), height: abs(shown.height).rounded()),
-            detail: "\(codec) → HEVC\(isHDR ? " HDR" : "") · \(clock(seconds))"
+            detail: "\(codec) → HEVC\(isHDR ? " HDR" : "")\(encoded != natural ? String(localized: " · resized") : "") · \(clock(seconds))"
         )
+    }
+
+    /// Fits the longest edge into `maxDimension` (0 = keep), with even sides for the encoder.
+    static func scaledSize(_ size: CGSize, maxDimension: Int) -> CGSize {
+        let longest = max(size.width, size.height)
+        guard maxDimension > 0, longest > CGFloat(maxDimension) else { return size }
+        let scale = CGFloat(maxDimension) / longest
+        let even = { (v: CGFloat) in CGFloat(max(2, Int((v * scale / 2).rounded()) * 2)) }
+        return CGSize(width: even(size.width), height: even(size.height))
     }
 
     private static func isSquished(_ asset: AVAsset) async throws -> Bool {

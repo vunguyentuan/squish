@@ -10,6 +10,7 @@ crate-type = ["staticlib", "rlib"]
 
 [dependencies]
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "gif", "tiff", "bmp", "rayon"] }
+fast_image_resize = { version = "5", features = ["image"] }
 imagequant = "4"
 imgref = "1.12"
 mozjpeg = { version = "0.10", default-features = false, features = ["with_simd", "parallel"] }

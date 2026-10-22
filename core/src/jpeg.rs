@@ -323,6 +323,7 @@ mod tests {
             keep_color_profile: true,
             effort: 1,
             target: Format::Unknown,
+            max_dimension: 0,
         }
     }
 

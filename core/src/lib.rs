@@ -9,6 +9,7 @@ mod exif;
 mod format;
 mod jpeg;
 mod png_opt;
+mod resize;
 mod svg;
 mod webp_opt;
 
@@ -42,6 +43,8 @@ pub struct SquishOptions {
     pub effort: u8,
     /// A `SquishFormat`; 0 keeps the source format.
     pub output_format: u8,
+    /// Longest edge in pixels; larger images are downscaled. 0 keeps the size.
+    pub max_dimension: u32,
 }
 
 #[repr(C)]
@@ -119,6 +122,7 @@ fn run(input: &str, output: &str, options: &SquishOptions) -> SquishResult {
         keep_color_profile: options.keep_color_profile,
         effort: options.effort.min(2),
         target: Format::from_u8(options.output_format),
+        max_dimension: options.max_dimension,
     };
     let original_size = data.len() as u64;
 
@@ -207,7 +211,7 @@ pub unsafe extern "C" fn squish_detect_format(path: *const c_char) -> u8 {
 /// Static, NUL-terminated description of the bundled codecs.
 #[unsafe(no_mangle)]
 pub extern "C" fn squish_engine_info() -> *const c_char {
-    c"oxipng 10 · libimagequant 4 · mozjpeg 4 · libwebp · rav1e (ravif) · OXVG".as_ptr()
+    c"oxipng 10 · libimagequant 4 · mozjpeg 4 · libwebp · rav1e (ravif) · OXVG · fast_image_resize".as_ptr()
 }
 
 /// Static, NUL-terminated engine version.

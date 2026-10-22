@@ -84,6 +84,10 @@ final class Preferences {
     var shakeToShelf: Bool { didSet { save(shakeToShelf, "shakeToShelf") } }
     var playSounds: Bool { didSet { save(playSounds, "playSounds") } }
     var hideDockIcon: Bool { didSet { save(hideDockIcon, "hideDockIcon") } }
+    /// Longest edge in pixels; 0 keeps the original size.
+    var maxDimension: Int { didSet { save(maxDimension, "maxDimension") } }
+
+    static let resizeChoices = [0, 3840, 2560, 1920, 1600, 1280, 1024, 800]
 
     private init() {
         defaults.register(defaults: [
@@ -99,6 +103,7 @@ final class Preferences {
             "shakeToShelf": true,
             "playSounds": false,
             "hideDockIcon": true,
+            "maxDimension": 0,
         ])
         preset = Preset(rawValue: defaults.string(forKey: "preset") ?? "") ?? .balanced
         quality = defaults.integer(forKey: "quality")
@@ -113,6 +118,7 @@ final class Preferences {
         shakeToShelf = defaults.bool(forKey: "shakeToShelf")
         playSounds = defaults.bool(forKey: "playSounds")
         hideDockIcon = defaults.bool(forKey: "hideDockIcon")
+        maxDimension = defaults.integer(forKey: "maxDimension")
     }
 
     var options: OptimizeOptions {
@@ -122,13 +128,17 @@ final class Preferences {
             stripMetadata: stripMetadata,
             keepColorProfile: keepColorProfile,
             effort: effort,
-            output: output
+            output: output,
+            maxDimension: maxDimension
         )
     }
 
-    /// One-line description, e.g. "Balanced · WebP".
+    /// One-line description, e.g. "Balanced · WebP · 2560 px".
     var summary: String {
-        output == .original ? preset.title : "\(preset.title) · \(output.title)"
+        var parts = [preset.title]
+        if output != .original { parts.append(output.title) }
+        if maxDimension > 0 { parts.append(String(localized: "\(String(maxDimension)) px")) }
+        return parts.joined(separator: " · ")
     }
 
     /// Marks the preset as custom after a manual tweak.

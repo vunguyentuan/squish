@@ -110,6 +110,12 @@ private struct OptimizationSettings: View {
                 }
                 Toggle("Lossless only", isOn: Binding(get: { prefs.lossless }, set: { v in prefs.customize { $0.lossless = v } }))
             }
+            Section("Size") {
+                ResizePicker(title: "Resize to fit")
+                Text("Larger images and videos are scaled down so their longest side fits. Resizing always re-encodes, even in Lossless mode.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             Section("Metadata") {
                 Toggle("Strip EXIF, GPS, XMP and comments", isOn: $prefs.stripMetadata)
                 Toggle("Keep ICC color profiles", isOn: $prefs.keepColorProfile)
@@ -136,6 +142,24 @@ private struct OptimizationSettings: View {
     private func engineRow(_ format: String, _ detail: String) -> some View {
         LabeledContent(format) {
             Text(detail).font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.trailing)
+        }
+    }
+}
+
+/// "Off" or a longest-edge size in pixels.
+struct ResizePicker: View {
+    @Environment(Preferences.self) private var prefs
+    var title: LocalizedStringKey
+
+    var body: some View {
+        @Bindable var prefs = prefs
+        Picker(title, selection: $prefs.maxDimension) {
+            ForEach(Preferences.resizeChoices, id: \.self) { size in
+                Text(size == 0 ? "Off" : "\(String(size)) px").tag(size)
+            }
+            if !Preferences.resizeChoices.contains(prefs.maxDimension) {
+                Text("\(String(prefs.maxDimension)) px").tag(prefs.maxDimension)
+            }
         }
     }
 }

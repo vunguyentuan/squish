@@ -33,6 +33,7 @@ typedef struct {
     bool keep_color_profile;  // keep ICC even when stripping
     uint8_t effort;           // 0 fast, 1 balanced, 2 maximum
     uint8_t output_format;    // SquishFormat, 0 keeps the source format
+    uint32_t max_dimension;   // longest edge in pixels, larger images are downscaled; 0 keeps the size
 } SquishOptions;
 
 typedef struct {
@@ -47,7 +48,7 @@ typedef struct {
     char *message;            // nullable, free with squish_result_free
 } SquishResult;
 
-/// Writes to output_path only when the result is smaller (or the format changes).
+/// Writes to output_path only when the result is smaller (or the format or size changes).
 SquishResult squish_optimize_file(const char *input_path, const char *output_path, const SquishOptions *options);
 void squish_result_free(SquishResult *result);
 uint8_t squish_detect_format(const char *path);

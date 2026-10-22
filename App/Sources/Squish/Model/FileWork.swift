@@ -111,6 +111,7 @@ nonisolated enum FileWork {
                 source,
                 to: place.destination,
                 quality: VideoWork.quality(order.options.quality),
+                maxDimension: order.options.maxDimension,
                 prioritizeSpeed: order.options.effort < 2,
                 keepMetadata: !order.options.stripMetadata,
                 progress: progress

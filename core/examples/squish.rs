@@ -12,6 +12,7 @@ fn main() {
         keep_color_profile: true,
         effort: 1,
         output_format: 0,
+        max_dimension: 0,
     };
     let mut files = Vec::new();
     let mut args = std::env::args().skip(1);

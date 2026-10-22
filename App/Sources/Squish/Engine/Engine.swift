@@ -76,6 +76,8 @@ nonisolated struct OptimizeOptions: Sendable, Equatable {
     /// 0 fast, 1 balanced, 2 maximum.
     var effort = 1
     var output = OutputFormat.original
+    /// Longest edge in pixels; 0 keeps the size.
+    var maxDimension = 0
 }
 
 nonisolated struct EngineResult: Sendable {
@@ -120,7 +122,8 @@ nonisolated enum Engine {
             strip_metadata: options.stripMetadata,
             keep_color_profile: options.keepColorProfile,
             effort: UInt8(clamping: options.effort),
-            output_format: options.output.format?.rawValue ?? 0
+            output_format: options.output.format?.rawValue ?? 0,
+            max_dimension: UInt32(clamping: options.maxDimension)
         )
         var raw = input.withUnsafeFileSystemRepresentation { inPath in
             output.withUnsafeFileSystemRepresentation { outPath in

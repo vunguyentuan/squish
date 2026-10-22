@@ -43,6 +43,7 @@ struct PresetPopover: View {
                     Text("Balanced").tag(1)
                     Text("Maximum").tag(2)
                 }
+                ResizePicker(title: "Resize:")
                 Picker("Save:", selection: $prefs.saveMode) {
                     ForEach(SaveMode.allCases) { Text($0.title).tag($0) }
                 }
