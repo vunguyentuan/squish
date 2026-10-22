@@ -19,13 +19,15 @@ struct ShelfView: View {
             .opacity(shelf.isPresented ? 1 : 0)
             .frame(width: ShelfController.size.width, height: ShelfController.size.height)
             .onDrop(of: [.fileURL], isTargeted: Binding(get: { shelf.isTargeted }, set: { t in
+                guard t != shelf.isTargeted else { return }
                 withAnimation(.smooth(duration: 0.2)) { shelf.isTargeted = t }
                 if t { Haptics.tap() }
             })) { providers in
                 FileDrop.load(providers) { shelf.receive($0) }
                 return true
             }
-            .onHover { shelf.isHovering = $0 }
+            // Mid-drag, hover would pop the glass controls in and out over the drop target.
+            .onHover { shelf.isHovering = $0 && !ShelfController.isDragging }
             .onChange(of: finished) { _, done in if done { shelf.batchFinished() } }
     }
 
@@ -46,11 +48,14 @@ struct ShelfView: View {
                     .transition(.opacity)
             }
         }
-        .glassEffect(.regular.tint(shelf.isTargeted ? Color.accentColor.opacity(0.18) : .clear), in: .rect(cornerRadius: 26))
+        // A fixed glass style: changing its tint rebuilds the glass, replaying its entrance animation.
+        .glassEffect(.regular, in: .rect(cornerRadius: 26))
         .overlay {
             if shelf.isTargeted {
                 RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .fill(Color.accentColor.opacity(0.12))
                     .strokeBorder(Color.accentColor, lineWidth: 2)
+                    .allowsHitTesting(false)
             }
         }
         // No `.shadow` here: on glass it renders as a rectangle clipped by the panel. Glass casts its own.

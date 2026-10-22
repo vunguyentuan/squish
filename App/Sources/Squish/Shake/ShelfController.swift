@@ -104,14 +104,13 @@ final class ShelfController {
     }
 
     private func dragEnded() {
-        // Shaken but dropped elsewhere: tidy up the empty shelf.
-        guard isPresented, batch == nil else { return }
-        // Hover tracking doesn't run during a drag session, and the shelf opens under the pointer,
-        // so `isHovering` can be stuck at true. Resync it with where the pointer actually is.
+        guard isPresented else { return }
+        // Hover is ignored during a drag (see ShelfView), so resync it with where the pointer actually is.
         isTargeted = false
         isHovering = isPointerOverShelf
-        // Short grace so a drop onto the shelf, whose URLs load asynchronously, can still land.
-        scheduleAutoHide(after: .milliseconds(300))
+        // Shaken but dropped elsewhere: tidy up the empty shelf. The short grace lets a drop onto
+        // the shelf, whose URLs load asynchronously, still land.
+        scheduleAutoHide(after: batch == nil ? .milliseconds(300) : .seconds(3))
     }
 
     private var isPointerOverShelf: Bool {
@@ -119,13 +118,16 @@ final class ShelfController {
         return panel.frame.insetBy(dx: Self.inset, dy: Self.inset).contains(NSEvent.mouseLocation)
     }
 
+    /// True while the files are still being held; `dragEnded` reschedules the hide on release.
+    static var isDragging: Bool { NSEvent.pressedMouseButtons & 1 != 0 }
+
     private func scheduleAutoHide(after delay: Duration = .seconds(3)) {
         guard isPresented else { return }
         let store = OptimizerStore.shared
         hideTask?.cancel()
         hideTask = Task { [weak self] in
             try? await Task.sleep(for: delay)
-            guard let self, !Task.isCancelled, !isPointerOverShelf, !isTargeted else { return }
+            guard let self, !Task.isCancelled, !Self.isDragging, !isPointerOverShelf, !isTargeted else { return }
             if let batch, store.jobs(in: batch).contains(where: { !$0.state.isFinished }) { return }
             hide()
         }
