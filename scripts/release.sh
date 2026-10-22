@@ -74,4 +74,9 @@ $(cat "$NOTES")
 </rss>
 EOF
 
+echo "▸ Writing Homebrew cask"
+SHA256="$(shasum -a 256 "$DMG" | cut -d' ' -f1)"
+sed -e "s/{{VERSION}}/$VERSION/" -e "s/{{SHA256}}/$SHA256/" \
+    "$ROOT/packaging/homebrew/squish.rb.in" > "$ROOT/packaging/homebrew/squish.rb"
+
 echo "✓ $(du -h "$DMG" | cut -f1)  $DMG — publish with make publish"

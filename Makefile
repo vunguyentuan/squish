@@ -6,7 +6,7 @@ app:            ## Build build/Squish.app (release)
 run: app        ## Build and launch
 	open build/Squish.app
 
-core:           ## Build only the Rust engine
+core:           ## Build only the Rust engine (and the standalone squish CLI)
 	MACOSX_DEPLOYMENT_TARGET=26.0 cargo build --release --manifest-path core/Cargo.toml
 
 test:           ## Run engine tests

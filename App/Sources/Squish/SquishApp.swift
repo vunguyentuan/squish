@@ -1,7 +1,6 @@
 import AppKit
 import SwiftUI
 
-@main
 struct SquishApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 

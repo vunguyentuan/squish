@@ -54,5 +54,7 @@ void squish_result_free(SquishResult *result);
 uint8_t squish_detect_format(const char *path);
 const char *squish_engine_info(void);
 const char *squish_version(void);
+/// Runs the `squish` command-line tool; returns the exit code.
+int squish_cli_main(int argc, char *const *argv);
 
 #endif

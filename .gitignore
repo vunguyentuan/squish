@@ -4,3 +4,4 @@ core/target/
 .DS_Store
 *.squish-partial
 .wrangler/
+packaging/homebrew/squish.rb

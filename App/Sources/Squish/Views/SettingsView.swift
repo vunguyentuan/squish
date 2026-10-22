@@ -224,6 +224,7 @@ private struct FormatSettings: View {
 private struct AutomationSettings: View {
     @Environment(Preferences.self) private var prefs
     @State private var selection: URL?
+    @State private var cliInstalled = CommandLineTool.isInstalled
 
     var body: some View {
         @Bindable var prefs = prefs
@@ -265,6 +266,22 @@ private struct AutomationSettings: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            Section {
+                LabeledContent("squish") {
+                    if cliInstalled {
+                        Label("Installed in /usr/local/bin", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    } else {
+                        Button("Install Command-Line Tool…", action: installCLI)
+                    }
+                }
+                Text("Run `squish --help` in Terminal. Useful in build scripts: `squish -i -r 2560 assets/`")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+            } header: {
+                Text("Command line")
+            }
         }
         .formStyle(.grouped)
     }
@@ -281,6 +298,15 @@ private struct AutomationSettings: View {
     private func watch(_ folder: URL) {
         let folder = folder.standardizedFileURL
         if !prefs.watchedFolders.contains(folder) { prefs.watchedFolders.append(folder) }
+    }
+
+    private func installCLI() {
+        do {
+            try CommandLineTool.install()
+        } catch {
+            NSAlert(error: error).runModal()
+        }
+        cliInstalled = CommandLineTool.isInstalled
     }
 }
 
