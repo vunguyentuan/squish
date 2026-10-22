@@ -62,10 +62,15 @@ struct JobList: View {
             }
             let convertible = jobs.filter(\.canConvert)
             if !convertible.isEmpty {
+                let outputs = OutputFormat.allCases.filter { output in
+                    convertible.contains { OutputFormat.conversions(for: $0.inputFormat).contains(output) }
+                }
                 Menu("Convert To") {
-                    ForEach(OutputFormat.allCases.filter { $0.format != nil }) { output in
+                    ForEach(outputs) { output in
                         Button(output.title) {
-                            convertible.filter { $0.inputFormat != output.format }.forEach { store.convert($0, to: output) }
+                            convertible
+                                .filter { OutputFormat.conversions(for: $0.inputFormat).contains(output) }
+                                .forEach { store.convert($0, to: output) }
                         }
                     }
                 }
@@ -177,7 +182,7 @@ struct ConvertMenu: View {
 
     var body: some View {
         Menu("Convert") {
-            ForEach(OutputFormat.allCases.filter { $0.format != nil && $0.format != job.inputFormat }) { output in
+            ForEach(OutputFormat.conversions(for: job.inputFormat)) { output in
                 Button {
                     store.convert(job, to: output)
                 } label: {
@@ -196,6 +201,7 @@ struct ConvertMenu: View {
         case .webp: "Small, works everywhere"
         case .avif: "Smallest, slower to encode"
         case .jpeg: "Maximum compatibility"
+        case .mp4: "Smallest for animations, plays everywhere"
         case .original: ""
         }
     }

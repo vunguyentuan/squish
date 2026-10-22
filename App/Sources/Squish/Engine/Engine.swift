@@ -48,6 +48,17 @@ nonisolated enum ImageFormat: UInt8, Sendable, CaseIterable {
 
 nonisolated enum OutputFormat: String, Sendable, CaseIterable, Identifiable {
     case original, webp, avif, jpeg
+    /// Animated GIF → H.264 video, made by the app rather than the engine.
+    case mp4
+
+    /// Choices for the global output pickers; MP4 only applies to GIFs.
+    static let imageCases: [OutputFormat] = [.original, .webp, .avif, .jpeg]
+
+    /// What a finished image of this format can be converted to.
+    static func conversions(for format: ImageFormat) -> [OutputFormat] {
+        let images: [OutputFormat] = [.webp, .avif, .jpeg]
+        return format == .gif ? [.webp, .mp4] : images.filter { $0.format != format }
+    }
 
     var id: String { rawValue }
     var format: ImageFormat? {
@@ -56,6 +67,7 @@ nonisolated enum OutputFormat: String, Sendable, CaseIterable, Identifiable {
         case .webp: .webp
         case .avif: .avif
         case .jpeg: .jpeg
+        case .mp4: .mp4
         }
     }
     var title: String {
@@ -64,6 +76,7 @@ nonisolated enum OutputFormat: String, Sendable, CaseIterable, Identifiable {
         case .webp: "WebP"
         case .avif: "AVIF"
         case .jpeg: "JPEG"
+        case .mp4: String(localized: "MP4 Video")
         }
     }
 }
@@ -122,7 +135,7 @@ nonisolated enum Engine {
             strip_metadata: options.stripMetadata,
             keep_color_profile: options.keepColorProfile,
             effort: UInt8(clamping: options.effort),
-            output_format: options.output.format?.rawValue ?? 0,
+            output_format: options.output == .mp4 ? 0 : options.output.format?.rawValue ?? 0,
             max_dimension: UInt32(clamping: options.maxDimension)
         )
         var raw = input.withUnsafeFileSystemRepresentation { inPath in

@@ -20,7 +20,7 @@ struct MenuBarContent: View {
             ForEach([Preset.lossless, .balanced, .maximum]) { Label($0.title, systemImage: $0.symbol).tag($0) }
         }
         Picker("Output", selection: $prefs.output) {
-            ForEach(OutputFormat.allCases) { Text($0.title).tag($0) }
+            ForEach(OutputFormat.imageCases) { Text($0.title).tag($0) }
         }
         Toggle("Shake to Drop", isOn: $prefs.shakeToShelf)
             .onChange(of: prefs.shakeToShelf) { _, on in ShelfController.shared.setEnabled(on) }

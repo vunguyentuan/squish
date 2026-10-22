@@ -22,6 +22,7 @@ png = "0.18"
 ravif = "0.13"
 rgb = "0.8"
 webp = { version = "0.3", default-features = false }
+libwebp-sys = "0.9"
 libc = "0.2"
 roxmltree = "0.21"
 

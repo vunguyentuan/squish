@@ -94,7 +94,7 @@ private struct OptimizationSettings: View {
                     ForEach(Preset.allCases) { Label($0.title, systemImage: $0.symbol).tag($0) }
                 }
                 Picker("Output format", selection: $prefs.output) {
-                    ForEach(OutputFormat.allCases) { Text($0.title).tag($0) }
+                    ForEach(OutputFormat.imageCases) { Text($0.title).tag($0) }
                 }
                 LabeledContent("Quality \(prefs.quality)") {
                     Slider(value: Binding(
@@ -130,6 +130,7 @@ private struct OptimizationSettings: View {
                 engineRow("WebP", "libwebp at method 6 with sharp YUV")
                 engineRow("AVIF", "rav1e AV1 encoder via ravif")
                 engineRow("SVG", "OXVG, a Rust port of SVGO")
+                engineRow("GIF", "Animated GIFs become animated WebP (libwebp) or H.264 MP4 (Apple's hardware encoder)")
                 engineRow("Video", "HEVC via Apple's hardware encoder (speed-tuned unless Effort is Maximum); HDR, rotation and audio are kept")
                 Text("Squish never makes a file bigger: if it can't win, the original is left untouched. Videos must shrink by at least 10% to be replaced.")
                     .font(.caption)

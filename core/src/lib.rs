@@ -2,6 +2,7 @@
 //!
 //! Every entry point is panic-safe: codec failures come back as status codes, never aborts.
 
+mod anim;
 mod avif;
 mod decode;
 mod engine;

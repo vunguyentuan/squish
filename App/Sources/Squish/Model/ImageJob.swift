@@ -68,7 +68,9 @@ final class ImageJob: Identifiable {
         return outputURL == sourceURL ? nil : sourceURL
     }
 
-    var canCompare: Bool { state == .optimized && !inputFormat.isVideo && beforeURL != nil && outputURL != nil }
+    var canCompare: Bool {
+        state == .optimized && !inputFormat.isVideo && outputFormat?.isVideo != true && beforeURL != nil && outputURL != nil
+    }
     var canRestore: Bool { state == .optimized && (backupURL != nil || outputURL != sourceURL) }
 
     /// Finished without producing a file, so converting it is a sensible next step.

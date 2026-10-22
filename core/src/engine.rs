@@ -1,7 +1,7 @@
 //! Format dispatch and the "never make a file bigger" rule.
 
 use crate::format::{self, Format};
-use crate::{avif, decode, jpeg, png_opt, resize, svg, webp_opt};
+use crate::{anim, avif, decode, jpeg, png_opt, resize, svg, webp_opt};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Settings {
@@ -49,14 +49,13 @@ pub fn optimize(input: &[u8], settings: &Settings) -> Result<Outcome, EngineErro
         Format::Svg | Format::Unknown | Format::Heic | Format::Avif => (0, 0),
         _ => decode::dimensions(input).unwrap_or((0, 0)),
     };
+    if input_format == Format::Gif && is_animated_gif(input) {
+        return animated_gif(input, settings);
+    }
     let target = if settings.target == Format::Unknown { input_format } else { settings.target };
     let converting = target != input_format;
-    let animated_gif = input_format == Format::Gif && is_animated_gif(input);
-    if converting && animated_gif {
-        return Err(EngineError::Unsupported("Animated GIFs can't be converted yet".into()));
-    }
     // Animations would lose every frame but the first, so they keep their size.
-    let animated = animated_gif || format::is_animated_png(input) || format::is_animated_webp(input);
+    let animated = format::is_animated_png(input) || format::is_animated_webp(input);
     let resize_to = (!animated && is_encodable(target))
         .then(|| resize::fit(width, height, settings.max_dimension))
         .flatten();
@@ -123,6 +122,23 @@ fn encode_raster(raster: &decode::Raster, target: Format, settings: &Settings) -
     }
 }
 
+/// Animated GIFs become animated WebP; the app turns them into MP4 itself.
+fn animated_gif(input: &[u8], settings: &Settings) -> Result<Outcome, EngineError> {
+    if settings.target != Format::WebP {
+        return Err(EngineError::Unsupported("Animated GIFs can only be converted to WebP or MP4".into()));
+    }
+    let animation = anim::gif_to_webp(input, settings)?;
+    let note = (animation.data.len() >= input.len()).then(|| "Converted file is larger than the original".to_string());
+    Ok(Outcome {
+        data: Some(animation.data),
+        input_format: Format::Gif,
+        output_format: Format::WebP,
+        width: animation.width,
+        height: animation.height,
+        note,
+    })
+}
+
 fn is_animated_gif(data: &[u8]) -> bool {
     use image::AnimationDecoder;
     image::codecs::gif::GifDecoder::new(std::io::Cursor::new(data))
@@ -185,5 +201,23 @@ mod tests {
         let input = encoded(120, 80, ImageFormat::Png);
         let outcome = optimize(&input, &Settings { max_dimension: 2560, ..settings() }).unwrap();
         assert_eq!((outcome.width, outcome.height), (120, 80));
+    }
+
+    #[test]
+    fn animated_gif_needs_webp_target() {
+        use image::codecs::gif::GifEncoder;
+        use image::{Delay, Frame};
+        let mut gif = Vec::new();
+        {
+            let mut encoder = GifEncoder::new(&mut gif);
+            for i in 0..3u8 {
+                let frame = RgbaImage::from_pixel(40, 30, Rgba([i * 80, 20, 200, 255]));
+                encoder.encode_frame(Frame::from_parts(frame, 0, 0, Delay::from_numer_denom_ms(50, 1))).unwrap();
+            }
+        }
+        assert!(matches!(optimize(&gif, &settings()), Err(EngineError::Unsupported(_))));
+        let outcome = optimize(&gif, &Settings { target: Format::WebP, ..settings() }).unwrap();
+        assert_eq!(outcome.output_format, Format::WebP);
+        assert!(format::is_animated_webp(outcome.data.as_deref().unwrap()));
     }
 }

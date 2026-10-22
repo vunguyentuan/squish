@@ -37,6 +37,9 @@ nonisolated enum FileWork {
         if order.inputFormat.isVideo {
             return await runVideo(order, progress: progress)
         }
+        if order.inputFormat == .gif && order.options.output == .mp4 {
+            return await runGIFVideo(order, progress: progress)
+        }
 
         let fm = FileManager.default
         let source = order.source
@@ -47,6 +50,7 @@ nonisolated enum FileWork {
             let reason = switch order.inputFormat {
             case .heic, .avif: "\(order.inputFormat.label) is already compact. Pick an output format to convert it."
             case .unknown: "Not a file Squish understands."
+            case .gif: String(localized: "GIF can't be optimized in place. Convert it to WebP or MP4.")
             default: "\(order.inputFormat.label) can't be optimized in place. Pick an output format to convert it."
             }
             return WorkOutcome(kind: .skipped(reason))
@@ -137,6 +141,38 @@ nonisolated enum FileWork {
         }
         outcome.optimizedSize = newSize
         commit(place, source: source, into: &outcome)
+        return outcome
+    }
+
+    /// Animated GIF → H.264 MP4 next to the original (or in the output folder).
+    private static func runGIFVideo(_ order: WorkOrder, progress: @escaping @Sendable (Double) -> Void) async -> WorkOutcome {
+        let place = placement(for: order, ext: ImageFormat.mp4.fileExtension, converting: true)
+        let clock = ContinuousClock()
+        let started = clock.now
+        var outcome = WorkOutcome(kind: .alreadyOptimal, outputFormat: .mp4)
+        do {
+            // MP4 has no lossless mode; "Lossless" gets the top of the quality range instead.
+            let quality = order.options.lossless ? 0.9 : VideoWork.quality(order.options.quality)
+            let result = try await GIFVideo.convert(
+                order.source,
+                to: place.destination,
+                quality: quality,
+                maxDimension: order.options.maxDimension,
+                progress: progress
+            )
+            outcome.pixelSize = result.pixelSize
+            outcome.detail = result.detail
+        } catch {
+            try? FileManager.default.removeItem(at: place.destination)
+            outcome.kind = .failed(error.localizedDescription)
+            return outcome
+        }
+        outcome.elapsedMs = Int((clock.now - started) / .milliseconds(1))
+        outcome.optimizedSize = fileSize(place.destination)
+        if outcome.optimizedSize ?? 0 >= fileSize(order.source) {
+            outcome.note = String(localized: "Converted file is larger than the original")
+        }
+        commit(place, source: order.source, into: &outcome)
         return outcome
     }
 

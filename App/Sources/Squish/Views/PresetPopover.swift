@@ -16,7 +16,7 @@ struct PresetPopover: View {
 
             Form {
                 Picker("Format:", selection: $prefs.output) {
-                    ForEach(OutputFormat.allCases) { Text($0.title).tag($0) }
+                    ForEach(OutputFormat.imageCases) { Text($0.title).tag($0) }
                 }
                 LabeledContent("Quality:") {
                     HStack(spacing: 8) {

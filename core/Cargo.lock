@@ -1976,6 +1976,7 @@ dependencies = [
  "imagequant",
  "imgref",
  "libc",
+ "libwebp-sys",
  "mozjpeg",
  "mozjpeg-sys",
  "oxipng",
