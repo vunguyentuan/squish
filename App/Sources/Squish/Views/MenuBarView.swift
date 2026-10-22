@@ -9,6 +9,9 @@ struct MenuBarContent: View {
         if store.savedBytes > 0 {
             Text("Saved \(Fmt.bytes(store.savedBytes)) this session")
         }
+        if LifetimeStats.shared.files > 0 {
+            Text("Saved \(Fmt.bytes(LifetimeStats.shared.savedBytes)) all time")
+        }
         if store.isWorking {
             Text("Squishing \(store.finishedCount + 1) of \(store.jobs.count)…")
         }

@@ -221,6 +221,8 @@ private struct FormatSettings: View {
 }
 
 private struct AboutSettings: View {
+    @State private var stats = LifetimeStats.shared
+
     var body: some View {
         VStack(spacing: 12) {
             Image(nsImage: NSApp.applicationIconImage)
@@ -229,6 +231,12 @@ private struct AboutSettings: View {
             Text("Squish").font(.title.bold())
             Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? Engine.version)")
                 .foregroundStyle(.secondary)
+            if stats.files > 0 {
+                Text("Squish has saved you \(Text(Fmt.bytes(stats.savedBytes)).foregroundStyle(.green).fontWeight(.semibold)) across \(Fmt.items(stats.files)).")
+                    .contextMenu {
+                        Button("Reset Statistics") { stats.reset() }
+                    }
+            }
             Text(Engine.codecs)
                 .font(.caption)
                 .foregroundStyle(.secondary)

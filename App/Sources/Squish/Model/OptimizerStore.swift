@@ -71,6 +71,7 @@ final class OptimizerStore {
     func restore(_ job: ImageJob) {
         do {
             try FileWork.restore(source: job.sourceURL, output: job.outputURL, backup: job.backupURL)
+            LifetimeStats.shared.undo(saved: job.savedBytes)
             withAnimation(.smooth) {
                 job.state = .restored
                 job.backupURL = nil
@@ -159,8 +160,9 @@ final class OptimizerStore {
             case .failed(let message): .failed(message)
             }
         }
-        if job.state == .optimized, let output = job.outputURL, output != job.sourceURL {
-            loadThumbnail(job)
+        if job.state == .optimized {
+            LifetimeStats.shared.record(saved: job.savedBytes)
+            if let output = job.outputURL, output != job.sourceURL { loadThumbnail(job) }
         }
         pump()
         announceIfBatchDone(job.batch)
