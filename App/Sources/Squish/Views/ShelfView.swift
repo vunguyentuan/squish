@@ -14,7 +14,7 @@ struct ShelfView: View {
         card(jobs: jobs, finished: finished)
             .contentShape(.rect(cornerRadius: 26))
             .gesture(WindowDragGesture()) // drag the shelf by any empty spot
-            .padding(16) // room for the shadow inside the borderless panel
+            .padding(ShelfController.inset) // room for the glass edge inside the borderless panel
             .scaleEffect(shelf.isPresented ? 1 : 0.85)
             .opacity(shelf.isPresented ? 1 : 0)
             .frame(width: ShelfController.size.width, height: ShelfController.size.height)
@@ -53,7 +53,7 @@ struct ShelfView: View {
                     .strokeBorder(Color.accentColor, lineWidth: 2)
             }
         }
-        .shadow(color: .black.opacity(0.18), radius: 14, y: 6)
+        // No `.shadow` here: on glass it renders as a rectangle clipped by the panel. Glass casts its own.
         .animation(.smooth(duration: 0.2), value: shelf.isHovering)
     }
 

@@ -32,6 +32,8 @@ final class ShelfPanel: NSPanel {
 final class ShelfController {
     static let shared = ShelfController()
     static let size = NSSize(width: 236, height: 236)
+    /// Transparent margin between the panel edge and the visible card.
+    static let inset: CGFloat = 16
 
     /// Drives the SwiftUI entrance/exit animation.
     var isPresented = false
@@ -104,7 +106,17 @@ final class ShelfController {
     private func dragEnded() {
         // Shaken but dropped elsewhere: tidy up the empty shelf.
         guard isPresented, batch == nil else { return }
-        scheduleAutoHide(after: .milliseconds(1400))
+        // Hover tracking doesn't run during a drag session, and the shelf opens under the pointer,
+        // so `isHovering` can be stuck at true. Resync it with where the pointer actually is.
+        isTargeted = false
+        isHovering = isPointerOverShelf
+        // Short grace so a drop onto the shelf, whose URLs load asynchronously, can still land.
+        scheduleAutoHide(after: .milliseconds(300))
+    }
+
+    private var isPointerOverShelf: Bool {
+        guard let panel, panel.isVisible else { return false }
+        return panel.frame.insetBy(dx: Self.inset, dy: Self.inset).contains(NSEvent.mouseLocation)
     }
 
     private func scheduleAutoHide(after delay: Duration = .seconds(3)) {
@@ -113,7 +125,7 @@ final class ShelfController {
         hideTask?.cancel()
         hideTask = Task { [weak self] in
             try? await Task.sleep(for: delay)
-            guard let self, !Task.isCancelled, !isHovering, !isTargeted else { return }
+            guard let self, !Task.isCancelled, !isPointerOverShelf, !isTargeted else { return }
             if let batch, store.jobs(in: batch).contains(where: { !$0.state.isFinished }) { return }
             hide()
         }
