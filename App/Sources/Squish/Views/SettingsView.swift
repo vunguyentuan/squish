@@ -259,6 +259,12 @@ private struct AutomationSettings: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            Section("Clipboard") {
+                Toggle("Optimize the clipboard image with \(ClipboardSquisher.shortcut)", isOn: $prefs.clipboardHotKey)
+                Text("Shrinks a copied screenshot or image before you paste it. PNG stays PNG and JPEG stays JPEG, so every app can paste it.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
         .formStyle(.grouped)
     }

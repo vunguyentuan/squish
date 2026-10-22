@@ -18,6 +18,7 @@ struct MenuBarContent: View {
         Button("Open Squish") { WindowRouter.openMain() }
             .keyboardShortcut("0")
         Button("Show Drop Shelf") { ShelfController.shared.show() }
+        Button("Optimize Clipboard Image (\(ClipboardSquisher.shortcut))") { ClipboardSquisher.shared.squish() }
         Divider()
         Picker("Preset", selection: $prefs.preset) {
             ForEach([Preset.lossless, .balanced, .maximum]) { Label($0.title, systemImage: $0.symbol).tag($0) }

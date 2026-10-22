@@ -26,6 +26,7 @@ struct SquishApp: App {
             CommandGroup(after: .newItem) {
                 Button("Show Drop Shelf") { ShelfController.shared.show() }
                     .keyboardShortcut("d", modifiers: [.command, .shift])
+                Button("Optimize Clipboard Image") { ClipboardSquisher.shared.squish() }
                 Divider()
                 Button("Copy Summary") { BatchReport.copySummary(store.jobs) }
                     .keyboardShortcut("c", modifiers: [.command, .shift])
@@ -60,6 +61,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ShelfController.shared.startMonitoring()
         DockIcon.shared.startMonitoring()
         FolderWatcher.shared.update()
+        ClipboardSquisher.shared.updateHotKey()
         NSApp.servicesProvider = services
         NSUpdateDynamicServices()
     }
@@ -78,10 +80,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    /// `squish://shelf` shows the drop shelf; `squish://open` brings up the main window.
+    /// `squish://shelf` shows the drop shelf, `squish://clipboard` optimizes the clipboard image,
+    /// `squish://open` brings up the main window.
     private func handle(_ link: URL) {
         switch link.host() {
         case "shelf": ShelfController.shared.show()
+        case "clipboard": ClipboardSquisher.shared.squish()
         default: WindowRouter.openMain()
         }
     }

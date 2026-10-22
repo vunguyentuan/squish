@@ -142,6 +142,7 @@ final class Preferences {
     var watchedFolders: [URL] {
         didSet { save(watchedFolders.map(\.path), "watchedFolders"); FolderWatcher.shared.update() }
     }
+    var clipboardHotKey: Bool { didSet { save(clipboardHotKey, "clipboardHotKey"); ClipboardSquisher.shared.updateHotKey() } }
 
     static let resizeChoices = [0, 3840, 2560, 1920, 1600, 1280, 1024, 800]
 
@@ -160,6 +161,7 @@ final class Preferences {
             "playSounds": false,
             "hideDockIcon": true,
             "maxDimension": 0,
+            "clipboardHotKey": true,
         ])
         preset = Preset(rawValue: defaults.string(forKey: "preset") ?? "") ?? .balanced
         quality = defaults.integer(forKey: "quality")
@@ -178,6 +180,7 @@ final class Preferences {
         formatRules = defaults.data(forKey: "formatRules")
             .flatMap { try? JSONDecoder().decode([FormatKind: FormatRule].self, from: $0) } ?? [:]
         watchedFolders = (defaults.stringArray(forKey: "watchedFolders") ?? []).map { URL(fileURLWithPath: $0) }
+        clipboardHotKey = defaults.bool(forKey: "clipboardHotKey")
     }
 
     var options: OptimizeOptions {
