@@ -119,7 +119,7 @@ struct FormatRule: Codable, Equatable {
 final class Preferences {
     static let shared = Preferences()
 
-    private let defaults = UserDefaults.standard
+    private let defaults: UserDefaults
 
     var preset: Preset { didSet { save(preset.rawValue, "preset"); apply(preset) } }
     var quality: Int { didSet { save(quality, "quality") } }
@@ -146,7 +146,8 @@ final class Preferences {
 
     static let resizeChoices = [0, 3840, 2560, 1920, 1600, 1280, 1024, 800]
 
-    private init() {
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         defaults.register(defaults: [
             "preset": Preset.balanced.rawValue,
             "quality": 80,

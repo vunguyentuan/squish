@@ -9,8 +9,9 @@ run: app        ## Build and launch
 core:           ## Build only the Rust engine (and the standalone squish CLI)
 	MACOSX_DEPLOYMENT_TARGET=26.0 cargo build --release --manifest-path core/Cargo.toml
 
-test:           ## Run engine tests
+test: core      ## Run engine and app tests
 	cargo test --release --manifest-path core/Cargo.toml
+	set -o pipefail; swift test --package-path App 2>&1 | { grep -v "was built for newer 'macOS' version" || true; }
 
 install: app    ## Copy to /Applications (enables Services + Launch at Login)
 	rm -rf /Applications/Squish.app && cp -R build/Squish.app /Applications/

@@ -26,5 +26,14 @@ let package = Package(
                 .linkedLibrary("iconv"),
             ]
         ),
+        .testTarget(
+            name: "SquishTests",
+            dependencies: ["Squish"],
+            path: "Tests/SquishTests",
+            swiftSettings: [
+                .defaultIsolation(MainActor.self),
+                .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+            ]
+        ),
     ]
 )
