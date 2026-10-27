@@ -106,6 +106,37 @@
   .download { text-align: center; }
   .download .intro { margin: 0 auto 32px; }
 
+  .apps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .app {
+    --tint: color-mix(in srgb, var(--glow) 13%, transparent);
+    position: relative; display: flex; flex-direction: column; padding: 26px 26px 22px;
+    border: 1px solid var(--line); border-radius: 18px; text-decoration: none;
+    background: radial-gradient(130% 90% at 0% 0%, var(--tint), transparent 62%), var(--bg);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .app:hover, .app:focus-visible {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--glow) 45%, var(--line));
+    box-shadow: 0 18px 40px -22px color-mix(in srgb, var(--glow) 60%, transparent);
+  }
+  .app:focus-visible { outline: 2px solid var(--glow); outline-offset: 3px; }
+  .app img {
+    width: 64px; height: 64px; margin: -4px 0 0 -4px;
+    filter: drop-shadow(0 6px 12px color-mix(in srgb, var(--glow) 32%, transparent));
+    transition: transform .35s cubic-bezier(.3, 1.5, .5, 1);
+  }
+  .app:hover img { transform: rotate(-5deg) scale(1.06); }
+  .app .head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 16px 0 6px; }
+  .app h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+  .app .tag {
+    font-size: 12px; font-weight: 500; line-height: 1; padding: 5px 9px; border-radius: 99px;
+    color: var(--muted); background: var(--soft); border: 1px solid var(--line);
+  }
+  .app p { margin: 0 0 22px; color: var(--muted); font-size: 15px; }
+  .app .go { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; }
+  .app .go span { transition: transform .25s ease; }
+  .app:hover .go span { transform: translateX(4px); }
+
   footer { border-top: 1px solid var(--line); padding: 28px 0 44px; font-size: 13px; color: var(--muted); }
   footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
@@ -115,7 +146,15 @@
     .numbers { grid-template-columns: repeat(2, 1fr); gap: 28px 20px; }
     .features { grid-template-columns: 1fr; gap: 28px; }
     .split { grid-template-columns: 1fr; gap: 32px; }
+    .apps { grid-template-columns: 1fr; }
     section { padding: 56px 0; }
+  }
+  @media (prefers-color-scheme: dark) {
+    .app { --tint: color-mix(in srgb, var(--glow) 20%, transparent); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .app, .app img, .app .go span { transition: none; }
+    .app:hover, .app:hover img, .app:hover .go span { transform: none; }
   }
 </style>
 </head>
@@ -256,9 +295,42 @@ make run</pre>
   </div>
 </section>
 
+<section id="more-apps">
+  <div class="wrap">
+    <h2>More Mac apps, made with the same care.</h2>
+    <p class="intro">Squish is one of a few small, native Mac apps I build. If you like how it feels, you'll probably like these too.</p>
+    <div class="apps">
+      <a class="app" href="https://www.smoothcapture.app/?ref=squish" style="--glow: #8a7dff">
+        <img src="assets/apps/smoothcapture.webp" alt="" width="64" height="64" loading="lazy">
+        <div class="head"><h3>SmoothCapture</h3><span class="tag">Free to try · Pay once</span></div>
+        <p>Turn a screen recording into a product video. Auto zoom, captions and titles, filmed on real 3D devices.</p>
+        <span class="go">smoothcapture.app <span>→</span></span>
+      </a>
+      <a class="app" href="https://shotshot.app/?ref=squish" style="--glow: #7357ff">
+        <img src="assets/apps/shotshot.webp" alt="" width="64" height="64" loading="lazy">
+        <div class="head"><h3>ShotShot</h3><span class="tag">Pay once</span></div>
+        <p>Capture any window, combine screenshots on one canvas, annotate them and export something worth sharing.</p>
+        <span class="go">shotshot.app <span>→</span></span>
+      </a>
+      <a class="app" href="https://www.chronoid.app/?ref=squish" style="--glow: #1f9bff">
+        <img src="assets/apps/chronoid.webp" alt="" width="64" height="64" loading="lazy">
+        <div class="head"><h3>Chronoid</h3><span class="tag">Free trial</span></div>
+        <p>Automatic time tracking. Knows where your hours went without a timer, and turns them into invoices.</p>
+        <span class="go">chronoid.app <span>→</span></span>
+      </a>
+      <a class="app" href="https://lightsout.madebyvu.com/?ref=squish" style="--glow: #ffc94d">
+        <img src="assets/apps/lightsout.webp" alt="" width="64" height="64" loading="lazy">
+        <div class="head"><h3>Lights Out</h3><span class="tag">Free · Open source</span></div>
+        <p>Keeps your Mac awake and unlocked for AI agents and automation while the screen stays dark.</p>
+        <span class="go">lightsout.madebyvu.com <span>→</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
-    <span>© 2026 Vu Nguyen · <a href="https://github.com/vunguyentuan/squish/blob/main/LICENSE">GPL-3.0</a></span>
+    <span>© 2026 Vu Nguyen · <a href="https://github.com/vunguyentuan/squish/blob/main/LICENSE">GPL-3.0</a> · <a href="#more-apps">More apps</a></span>
     <span>Images on this page were optimized by Squish.</span>
   </div>
 </footer>
