@@ -262,7 +262,8 @@ private struct AutomationSettings: View {
             }
             Section("Clipboard") {
                 Toggle("Optimize the clipboard image with \(ClipboardSquisher.shortcut)", isOn: $prefs.clipboardHotKey)
-                Text("Shrinks a copied screenshot or image before you paste it. PNG stays PNG and JPEG stays JPEG, so every app can paste it.")
+                Toggle("Optimize copied images automatically", isOn: $prefs.clipboardAutoOptimize)
+                Text("Shrinks a copied screenshot or image before you paste it. PNG stays PNG and JPEG stays JPEG, so every app can paste it. Copied files, passwords and other private clipboard content are never touched automatically.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

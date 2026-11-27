@@ -61,6 +61,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         DockIcon.shared.startMonitoring()
         FolderWatcher.shared.update()
         ClipboardSquisher.shared.updateHotKey()
+        ClipboardSquisher.shared.updateWatcher()
         NSApp.servicesProvider = services
         NSUpdateDynamicServices()
     }

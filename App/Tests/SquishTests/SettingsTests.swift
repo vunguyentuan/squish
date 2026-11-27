@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Testing
 @testable import Squish
@@ -121,5 +122,17 @@ final class TestDefaults {
         let result = try #require(ClipboardSquisher.optimize(png, format: .png, options: OptimizeOptions()))
         #expect(result.count < png.count)
         #expect(result.starts(with: [0x89, 0x50, 0x4E, 0x47]))
+    }
+
+    @Test func automaticModeOnlyTakesCopiedImages() {
+        typealias T = NSPasteboard.PasteboardType
+        let shouldOptimize = ClipboardSquisher.shouldOptimizeAutomatically
+        #expect(shouldOptimize([.png]))
+        #expect(shouldOptimize([.tiff, .png, .html]))
+        #expect(!shouldOptimize([.string]))
+        #expect(!shouldOptimize([.fileURL, .tiff]))
+        #expect(!shouldOptimize([.png, ClipboardSquisher.optimizedMarker]))
+        #expect(!shouldOptimize([.png, T("org.nspasteboard.ConcealedType")]))
+        #expect(!shouldOptimize([.png, T("org.nspasteboard.TransientType")]))
     }
 }
